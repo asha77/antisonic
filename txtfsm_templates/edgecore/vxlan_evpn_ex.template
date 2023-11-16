@@ -1,0 +1,9 @@
+Value Filldown ESID (([0-9A-Fa-f]{2}[:-]){9}([0-9A-Fa-f]{2}))
+Value Filldown TYPE (R|N|LR|L|LRN)
+Value PORT (\s+|\w+)
+Value STATUS (\s+|up|down)
+Value VTEP_IP (\s+|(?:[0-9]{1,3}\.){3}[0-9]{1,3})
+
+Start
+#  ^[+=]+
+  ^\|\s+${ESID}\s+\|\s+${TYPE}\s+\|\s+${PORT}\s+\|\s+${STATUS}\s+\|\s+${VTEP_IP}\s+\| -> Record

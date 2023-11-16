@@ -1,0 +1,17 @@
+Value INDEX (\d+)
+Value VLAN_ID (\d+)
+Value MAC_ADDRESS (([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))
+Value PORT (\S+)
+Value ESID (([0-9A-Fa-f]{2}[:-]){9}([0-9A-Fa-f]{2}))
+Value DIP ((?:[0-9]{1,3}\.){3}[0-9]{1,3})
+Value STATE (Static|Dynamic)
+
+Start
+  # Captures show mac-address-table for:
+  # Accton 7326-56X
+  # Raw data is the same in the case of all those devices
+  ^\s*No.\s+Vlan\s+MacAddress\s+Port\s+Type
+  ^-+
+  ^\s*${INDEX}\s+${VLAN_ID}\s+${MAC_ADDRESS}\s+${PORT}\s+${STATE} -> Record
+  ^\s*${INDEX}\s+${VLAN_ID}\s+${MAC_ADDRESS}\s+ESI:\s${ESID}\s+${STATE} -> Record
+  ^\s*${INDEX}\s+${VLAN_ID}\s+${MAC_ADDRESS}\s+VxLAN\sDIP:\s${DIP}\s+${STATE} -> Record
