@@ -1,0 +1,12 @@
+Value IP_ADDRESS ((?:[0-9]{1,3}\.){3}[0-9]{1,3})
+Value HW_TYPE (\S+)
+Value MAC_ADDRESS (([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))
+Value FLAGS (\S+)
+Value MASK (\s+)
+Value INTERFACE (\S+)
+
+Start
+  ^Address\s+HWtype\s+HWaddress\s+Flags\s+Mask\s+Iface
+  ^${IP_ADDRESS}\s+${HW_TYPE}\s+${MAC_ADDRESS}\s+${FLAGS}\s+${MASK}\s+${INTERFACE}$$ -> Record
+  ^${IP_ADDRESS}\s+\(incomplete\)\s+${INTERFACE}$$ -> Record
+#  ^${REV_DNS}\s+\(${IP_ADDRESS}\)\s+\S+\s+<${MAC_ADDRESS}>\s+\S+\s+${INTERFACE}$$ -> Record
