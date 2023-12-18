@@ -1,0 +1,9 @@
+/*.bkp
+venv
+.venv
+.idea
+__pycache__
+test_data
+ytc*
+/test_data/
+/ytcswl0304/

@@ -67,6 +67,10 @@ def main():
 
                         txtfsmparsers.get_arps_to_model(empty_device, config, curr_path)
 
+                        txtfsmparsers.get_ip_nei_to_model(empty_device, config, curr_path)
+
+                        empty_device['errors'] = regparsers.check_error_log(empty_device['vendor_id'], config)
+
                         # get list of cdp neighbours
 # not yet                       txtfsmparsers.get_cdp_neighbours_to_model(empty_device, config, curr_path)
 
@@ -86,40 +90,96 @@ def main():
         out_to_screen.print_devices_summary(devices)
         outintofiles.summary_file_output(devices)
 
+        out_to_screen.print_devices_errors(devices)
+
+
         # print all macs to file all_macs.csv
         outintofiles.macs_to_file(devices)
         # print all arps to file all_arps.csv
         outintofiles.arps_to_file(devices)
 
-        ############ DO ANALYTICS ################
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-FAB-SWL03", "TC-YAR-MD6-FAB-SWL04")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-FAB-SWL03", "TC-YAR-MD6-FAB-SWL04")
+        # print ip neighbours to file all_ip_neighbours.csv
+        outintofiles.ip_neigh_to_file(devices)
 
-        outintofiles.same_stated_macs_to_file(same_stated_macs, "_SWL03_SWL04")
-        outintofiles.absent_macs_to_file(absent_macs, "_SWL03_SWL04")
+        ############ DO ANALYTICS SWL01-SWL02 ################
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-8M1-fab-swl01", "TC-MSK-8M1-fab-swl02")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-8M1-fab-swl01", "TC-MSK-8M1-fab-swl02")
 
-        outintofiles.incompleted_arps_to_file(incompleted_arps, "_SWL03_SWL04")
-        outintofiles.absent_arps_to_file(absent_arps, "_SWL03_SWL04")
+        same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
+        absent_macs = analytics.remove_absent_mac_dups(absent_macs)
 
+        prefix = '_SWL01_SWL02'
+
+        outintofiles.same_stated_macs_to_file(same_stated_macs, prefix)
+        outintofiles.absent_macs_to_file(absent_macs, prefix)
+
+        outintofiles.incompleted_arps_to_file(incompleted_arps, prefix)
+        outintofiles.absent_arps_to_file(absent_arps, prefix)
+
+        ############ DO ANALYTICS SWL03-SWL04 ################
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-8M1-fab-swl03", "TC-MSK-8M1-fab-swl04")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-8M1-fab-swl03", "TC-MSK-8M1-fab-swl04")
+
+        same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
+        absent_macs = analytics.remove_absent_mac_dups(absent_macs)
+
+        prefix = '_SWL03_SWL04'
+
+        outintofiles.same_stated_macs_to_file(same_stated_macs, prefix)
+        outintofiles.absent_macs_to_file(absent_macs, prefix)
+
+        outintofiles.incompleted_arps_to_file(incompleted_arps, prefix)
+        outintofiles.absent_arps_to_file(absent_arps, prefix)
+
+        ############ DO ANALYTICS SWL05-SWL06 ################
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-8M1-fab-swl05", "TC-MSK-8M1-fab-swl06")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-8M1-fab-swl05", "TC-MSK-8M1-fab-swl06")
+
+        same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
+        absent_macs = analytics.remove_absent_mac_dups(absent_macs)
+
+        prefix = '_SWL05_SWL06'
+
+        outintofiles.same_stated_macs_to_file(same_stated_macs, prefix)
+        outintofiles.absent_macs_to_file(absent_macs, prefix)
+
+        outintofiles.incompleted_arps_to_file(incompleted_arps, prefix)
+        outintofiles.absent_arps_to_file(absent_arps, prefix)
+
+
+        ############ DO ANALYTICS BR01-BR02 ################
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-8M1-fab-BR01", "TC-MSK-8M1-fab-BR02")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-8M1-fab-BR01", "TC-MSK-8M1-fab-BR02")
+
+        same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
+        absent_macs = analytics.remove_absent_mac_dups(absent_macs)
+
+        prefix = '_BR01_BR02'
+
+        outintofiles.same_stated_macs_to_file(same_stated_macs, prefix)
+        outintofiles.absent_macs_to_file(absent_macs, prefix)
+
+        outintofiles.incompleted_arps_to_file(incompleted_arps, prefix)
+        outintofiles.absent_arps_to_file(absent_arps, prefix)
 
         #  print all neighbours from all devices into 'all_neighbours_output.csv' file
-# not yet        outintofiles.all_neighbours_to_file(devices)
+        # not yet        outintofiles.all_neighbours_to_file(devices)
 
         #  print links (connectivity) to all neighbours from all devices into file 'cdp_nei_output.csv'
-# not yet        outintofiles.connectivity_to_file(devices)
+        # not yet        outintofiles.connectivity_to_file(devices)
 
         # print interfaces info into file
-# not yet        outintofiles.interfaces_to_file(devices)
+        # not yet        outintofiles.interfaces_to_file(devices)
 
         # Trying to find missed devices that can be found in cdp data and save this to "missed_devices.csv" file
-# not yet        missed_devices = outintofiles.find_missed_devices()
-# not yet        outintofiles.missed_devices_file_output(missed_devices)
+        # not yet        missed_devices = outintofiles.find_missed_devices()
+        # not yet        outintofiles.missed_devices_file_output(missed_devices)
 
-#        if len(missed_devices) > 0:
-#            print('In CDP configuration we found mentioned {} devices, for whom we have no configurations.\n'
-#                  'See file \"missed.devices.csv\"'.format(len(missed_devices)))
-# analysis of required VLAN on trunk ports
-#        trunking_analisys()
+        #        if len(missed_devices) > 0:
+        #            print('In CDP configuration we found mentioned {} devices, for whom we have no configurations.\n'
+        #                  'See file \"missed.devices.csv\"'.format(len(missed_devices)))
+        # analysis of required VLAN on trunk ports
+        #        trunking_analisys()
 
         print("Finished processing files in folder: " + str(namespace.configdir) + '\n')
 
