@@ -1,0 +1,16 @@
+Value IP_ADDRESS ((?:[0-9]{1,3}\.){3}[0-9]{1,3})
+Value DEV (\S+)
+Value MAC_ADDRESS (([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))
+Value LEARN (extern_learn|router\sref\s1|ref\s1)
+Value USED (\d+\/\d+\/\d+)
+Value PROBES (\d)
+Value STATE (NONE|INCOMPLETE|DELAY|PROBE|REACHABLE|NOARP|FAILED|STALE|PERMANENT)
+Value PROTO (\S+)
+
+# do not collect IPv6 addresses
+
+Start
+  ^${IP_ADDRESS}\s+dev\s+${DEV}\s+lladdr\s+${MAC_ADDRESS}\s+${LEARN}\s+used\s+${USED}\s+probes\s+${PROBES}\s+${STATE}\s+proto\s+${PROTO}\s*$$ -> Record
+  ^${IP_ADDRESS}\s+dev\s+${DEV}\s+lladdr\s+${MAC_ADDRESS}\s+used\s+${USED}\s+probes\s+${PROBES}\s+${STATE}\s+proto\s+${PROTO}\s*$$ -> Record
+  ^${IP_ADDRESS}\s+dev\s+${DEV}\s+lladdr\s+${MAC_ADDRESS}\s+${LEARN}\s+used\s+${USED}\s+probes\s+${PROBES}\s+${STATE}\s*$$ -> Record
+  ^${IP_ADDRESS}\s+dev\s+${DEV}\s+used\s+${USED}\s+probes\s+${PROBES}\s+${STATE}\s*$$ -> Record

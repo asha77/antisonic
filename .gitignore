@@ -1,0 +1,7 @@
+/*.bkp
+venv
+.venv
+.idea
+__pycache__
+test_data
+ytc*
