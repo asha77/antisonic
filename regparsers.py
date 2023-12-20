@@ -900,7 +900,6 @@ def check_error_log(vendor_id, log_file):
         for regexp in datamodel.edgecore_log_errors:
             match = re.findall(regexp, log_file)
             if match:
-                for i in range(len(match)):
-                    errors.append(match[i])
+                errors.append(match[0] + " #### repeated: " + str(len(match)) + " times.")
 
     return errors

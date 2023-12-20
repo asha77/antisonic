@@ -180,7 +180,6 @@ def remove_absent_mac_dups(absent_macs_input):
 
 
 
-
 def compare_arps(devices, dev_name_1, dev_name_2):
     incompleted_arps = []
     absent_arps = []
