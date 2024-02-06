@@ -1,6 +1,5 @@
 import re
 import netaddr
-
 import datamodel
 import device_detection
 
@@ -145,6 +144,38 @@ def obtain_model(vendor_id, config):
     return "Not found"
 
 
+def obtain_num_hosts(vendor_id, config):
+    if vendor_id == 'edgecore':
+        match = re.search('hosts\s+:\s+(\d+)\s', config)
+        if match:
+            return match.group(1).strip()
+    return "Not found"
+
+
+def obtain_route_num(vendor_id, config):
+    if vendor_id == 'edgecore':
+        match = re.search('routes\s+:\s+(\d+)\s', config)
+        if match:
+            return match.group(1).strip()
+    return "Not found"
+
+
+def obtain_nexthops(vendor_id, config):
+    if vendor_id == 'edgecore':
+        match = re.search('nexthops\s+:\s+(\d+)\s', config)
+        if match:
+            return match.group(1).strip()
+    return "Not found"
+
+
+def obtain_ecmp_groups(vendor_id, config):
+    if vendor_id == 'edgecore':
+        match = re.search('ecmp_groups\s+:\s+(\d+)\s', config)
+        if match:
+            return match.group(1).strip()
+    return "Not found"
+
+
 def obtain_serial(config):
     '''
     Extract serial number
@@ -263,9 +294,13 @@ def obtain_software_version(os, config):
     elif os == 'sonic_edgecore':
         match = re.search('\s*SONiC Software Version:\s*(\S+)', config)
         if match:
-            return match.group(1).strip()
-    else:
-        return "Not Found"
+            str = match.group(1).strip()
+            str = str[15:len(str)]
+
+#            return match.group(1).strip()
+            return str
+        else:
+            return "Not Found"
 
 
 def obtain_mng_ip_from_filename(filename):
@@ -896,10 +931,20 @@ def ip_mask_to_prefix(ip, octet_mask):
 
 def check_error_log(vendor_id, log_file):
     errors = []
+    num_err = 0
     if vendor_id == 'edgecore':
         for regexp in datamodel.edgecore_log_errors:
             match = re.findall(regexp, log_file)
             if match:
                 errors.append(match[0] + " #### repeated: " + str(len(match)) + " times.")
+                num_err = num_err + len(match)
+    return errors, str(num_err)
 
-    return errors
+
+def count_all_errors_from_log(vendor_id, log_file):
+    num_errors = 0
+    if vendor_id == 'edgecore':
+        match = re.findall('\sERR\s', log_file)
+        if match:
+            num_errors = len(match)
+    return num_errors

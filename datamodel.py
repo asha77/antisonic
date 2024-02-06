@@ -43,8 +43,15 @@ config_entity = {
     'line_con': [],                                 # {'number': 'num', 'transport_input': 'ssh', 'transport_output': 'none', 'logging': 'synchronous', 'exec-timeout': '60 0', 'password': '7', 'secret': '7', 'access_class': '', 'auth_exec': 'ISE', 'login_auth': 'ISE'}
     'line_aux': [],                                 # {'number': 'num', 'transport_input': 'ssh', 'transport_output': 'none', 'logging': 'synchronous', 'exec-timeout': '60 0', 'password': '7', 'secret': '7', 'access_class': '', 'auth_exec': 'ISE', 'login_auth': 'ISE'}
     'line_vty': [],                                 # {'number': 'num', 'transport_input': 'ssh', 'transport_output': 'none', 'transport_preferred': 'none', 'logging': 'synchronous', 'exec-timeout': '60 0', 'password': '7', 'secret': '7', 'access_class': '', 'auth_exec': 'ISE', 'login_auth': 'ISE'}
-    'errors': []
+    'errors': [],
+    'known_errors': '',                             # number of well-known errors
+    'all_errors': '',                               # number of all errors (\sERR\s prefix in logs)
+    'ecmp_groups': '',                              # actual number of ECMP Groups
+    'hosts': '',                                    # actual number of HOSTS
+    'next_hops': '',                                # actual number of NEXT HOPS
+    'routes': ''                                    # actual number of routes
 }
+
 
 interface_entity = {
     'name': '',                                     # gi0/1
@@ -100,6 +107,7 @@ arp_record = {
     'port': '',
     'type': ''
     }
+
 
 edgecore_log_errors = [
     'ERR\ssystemd\S*:\sFailed\sto\sstart\s\S*\scontainer.',

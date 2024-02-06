@@ -1006,6 +1006,7 @@ def get_arps_to_model(empty_device, config, curr_path):
             })
     return empty_device
 
+
 # TODO: extract only one VTEP (first) VTEP IP - to be done !!!!
 def get_esi_to_model(empty_device, config, curr_path):
     if empty_device['os'] == 'sonic_edgecore':

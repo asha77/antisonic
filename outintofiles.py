@@ -2,7 +2,7 @@ import os
 import txtfsmparsers
 from datetime import datetime
 import regparsers
-
+import json
 
 interfaces = [
     [["Ethernet", "Eth"], "Eth"],
@@ -22,6 +22,9 @@ interfaces = [
 def init_files():
     if not os.path.isdir("output"):
         os.mkdir("output")
+
+    if not os.path.isdir("report"):
+        os.mkdir("report")
 
     # инициализация файла c основным выводом
     resfile = open(os.path.join("output", "cparser_output.csv"), "w")
@@ -1038,7 +1041,6 @@ def same_stated_macs_to_file(same_stated_macs, file_suffix):
         f_ss_macs.close()
 
 
-
 def absent_macs_to_file(absent_macs, file_suffix):
     f_abs_macs = open(os.path.join("output", "absent_macs" + file_suffix + ".csv"), "w")
 
@@ -1138,3 +1140,157 @@ def absent_arps_to_file(absent_arps, file_suffix):
             arp[14]
         ))
     f_abs_arps.close()
+
+
+def sw_stats_to_json(devices):
+    sw_stats = {}
+    sw_stats['data'] = []
+
+    for dev in devices:
+        sw_stats['data'].append({
+        '{#SW_HOSTNAME}': dev['hostname'],
+        '{#SW_IP}': dev['mgmt_ipv4_from_filename'],
+        '{#SW_KNOWN_ERRORS}': dev['known_errors'],
+        '{#SW_ALL_ERRORS}': dev['all_errors'],
+        '{#ECMP_GROUPS}': dev['ecmp_groups'],
+        '{#HOSTS}': dev['hosts'],
+        '{#NEXTHOPS}': dev['next_hops']
+    })
+
+    with open(os.path.join("output", "msk_switches_inventory.json"), "w", encoding='utf-8') as f:
+        f.write(json.dumps(sw_stats, ensure_ascii=False, indent=4))
+
+
+def fab_stats_to_json(devices, stats):
+    fab_stats = {}
+    fab_stats['data'] = []
+
+    fab_stats['data'].append({
+        '{#SW_PAIR}': 'MSK_SW01-SW02',
+        '{#SAME_STATED_MACS}': stats[0]['same_macs'],
+        '{#ABSENT_MACS}': stats[0]['absent_macs'],
+        '{#ABSENT_ARPS}': stats[0]['absent_arps'],
+        '{#INCOMPLETE_ARPS}': stats[0]['incompleted_arps'],
+        '{#INCONSISTANT_ROUTES}': '0'
+    })
+
+    fab_stats['data'].append({
+        '{#SW_PAIR}': 'MSK_SW03-SW04',
+        '{#SAME_STATED_MACS}': stats[1]['same_macs'],
+        '{#ABSENT_MACS}': stats[1]['absent_macs'],
+        '{#ABSENT_ARPS}': stats[1]['absent_arps'],
+        '{#INCOMPLETE_ARPS}': stats[1]['incompleted_arps'],
+        '{#INCONSISTANT_ROUTES}': '0'
+    })
+
+    fab_stats['data'].append({
+        '{#SW_PAIR}': 'MSK_SW05-SW06',
+        '{#SAME_STATED_MACS}': stats[2]['same_macs'],
+        '{#ABSENT_MACS}': stats[2]['absent_macs'],
+        '{#ABSENT_ARPS}': stats[2]['absent_arps'],
+        '{#INCOMPLETE_ARPS}': stats[2]['incompleted_arps'],
+        '{#INCONSISTANT_ROUTES}': '0'
+    })
+
+    fab_stats['data'].append({
+        '{#SW_PAIR}': 'MSK_BR01-BR02',
+        '{#SAME_STATED_MACS}': stats[3]['same_macs'],
+        '{#ABSENT_MACS}': stats[3]['absent_macs'],
+        '{#ABSENT_ARPS}': stats[3]['absent_arps'],
+        '{#INCOMPLETE_ARPS}': stats[3]['incompleted_arps'],
+        '{#INCONSISTANT_ROUTES}': '0'
+    })
+
+    with open(os.path.join("output", "msk_switches_analytics.json"), "w", encoding='utf-8') as f:
+        f.write(json.dumps(fab_stats, ensure_ascii=False, indent=4))
+
+
+def report_to_file(date, devices, stats):
+    f_fabric_report = open(os.path.join("report", date + "_fab_report.txt"), "w", encoding='utf-8')
+
+    f_fabric_report.write('=============== REPORT GENERATED AT {0:25s} ============== \n\n\n'.format(date))
+    ind = 1
+
+    f_fabric_report.write('------------------------------------------------------------------------------'
+                          '------------------------------------------------------------------------'
+                          '----------------------------------------------------------------------------------------\n')
+
+    f_fabric_report.write(
+        '| {0:4s} | {1:30s} | {2:20s} | {3:24s} | {4:20s} | {5:45s} | {6:10s} | {7:10s} | {8:12s} | {9:10s} | {10:10s} | {11:10s} |\n'.format(
+            'Num',
+            'hostname',
+            'ip address',
+            'model',
+            'serial',
+            'sw version',
+            'known errs',
+            'all errs',
+            'ecmp groups',
+            'next hops',
+            'hosts',
+            'routes'
+        ))
+
+    f_fabric_report.write('------------------------------------------------------------------------------'
+                          '------------------------------------------------------------------------'
+                          '----------------------------------------------------------------------------------------\n')
+    for dev in devices:
+        f_fabric_report.write('| {0:4d} | {1:30s} | {2:20s} | {3:24s} | {4:20s} | {5:45s} | {6:10s} | {7:10s} | {8:12s} | {9:10s} | {10:10s} | {11:10s} |\n'.format(
+            ind,
+            dev['hostname'],
+            dev['mgmt_ipv4_from_filename'],
+            dev['model'],
+            dev['serial'],
+            dev['sw_version'],
+            dev['known_errors'],
+            dev['all_errors'],
+            dev['ecmp_groups'],
+            dev['next_hops'],
+            dev['hosts'],
+            dev['routes']
+        ))
+        ind = ind + 1
+
+    f_fabric_report.write('------------------------------------------------------------------------------'
+                          '------------------------------------------------------------------------'
+                          '------------------------------------------------------------------------\n')
+
+    f_fabric_report.write('\n\n')
+    f_fabric_report.write('--------------------------------------------------------------------------------\n')
+    f_fabric_report.write('|        Metric        | SWL01-SWL02 | SWL03-SWL04 | SWL05-SWL06 |  BR01-BR02  |\n')
+    f_fabric_report.write('--------------------------------------------------------------------------------\n')
+    f_fabric_report.write('| {0:20s} | {1:11s} | {2:11s} | {3:11s} | {4:11s} |\n'.format(
+            'Same stated MACs',
+            str(stats[0]['same_macs']),
+            str(stats[1]['same_macs']),
+            str(stats[2]['same_macs']),
+            str(stats[3]['same_macs'])
+        ))
+
+    f_fabric_report.write('| {0:20s} | {1:11s} | {2:11s} | {3:11s} | {4:11s} |\n'.format(
+            'Absent MACs',
+            str(stats[0]['absent_macs']),
+            str(stats[1]['absent_macs']),
+            str(stats[2]['absent_macs']),
+            str(stats[3]['absent_macs'])
+        ))
+
+    f_fabric_report.write('| {0:20s} | {1:11s} | {2:11s} | {3:11s} | {4:11s} |\n'.format(
+            'Incompleted ARPs',
+            str(stats[0]['incompleted_arps']),
+            str(stats[1]['incompleted_arps']),
+            str(stats[2]['incompleted_arps']),
+            str(stats[3]['incompleted_arps'])
+        ))
+
+    f_fabric_report.write('| {0:20s} | {1:11s} | {2:11s} | {3:11s} | {4:11s} |\n'.format(
+            'Absent ARPs',
+            str(stats[0]['absent_arps']),
+            str(stats[1]['absent_arps']),
+            str(stats[2]['absent_arps']),
+            str(stats[3]['absent_arps'])
+        ))
+    f_fabric_report.write('--------------------------------------------------------------------------------\n')
+
+    f_fabric_report.close()
+

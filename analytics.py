@@ -55,12 +55,25 @@ def compare_macs(devices, dev_name_1, dev_name_2):
                                                     mac_on_dev2['state']
                                                 ])
                         if not mac_found:
+                            # TODO: do separate filter function
                             # filter Edgecore MACS and LLD handmade MACs
+                            # '14:44:8F' Edgecore
+                            # 'D0:77:CE' Edgecore
+                            # 'B6:96:91' Intel LLDP
+                            # 'E4:9D:73' Edgecore
+                            # '32:3E:A7' Intel LLDP
+                            # '52:7C:6F' Intel LLDP
+                            # '36:73:79' xFusion LLDP
+                            # 'E0:01:A6' Edgecore
+
                             if '14:44:8F' not in mac_on_dev1['mac'] \
                                     and 'D0:77:CE' not in mac_on_dev1['mac'] \
                                     and 'B6:96:91' not in mac_on_dev1['mac'] \
-                                    and 'E4:9D:73' not in mac_on_dev1['mac']:
-
+                                    and 'E4:9D:73' not in mac_on_dev1['mac'] \
+                                    and '32:3E:A7' not in mac_on_dev1['mac'] \
+                                    and '52:7C:6F' not in mac_on_dev1['mac'] \
+                                    and '36:73:79' not in mac_on_dev1['mac'] \
+                                    and 'E0:01:A6' not in mac_on_dev1['mac']:
                                 absent_macs.append([
                                     dev1['hostname'],
                                     mac_on_dev1['vlan_id'],
@@ -127,10 +140,25 @@ def compare_macs(devices, dev_name_1, dev_name_2):
 
                         if not mac_found:
                             # filter Edgecore MACS and LLD handmade MACs
+                            # TODO: do separate filter function
+                            # filter Edgecore MACS and LLD handmade MACs
+                            # '14:44:8F' Edgecore
+                            # 'D0:77:CE' Edgecore
+                            # 'B6:96:91' Intel LLDP
+                            # 'E4:9D:73' Edgecore
+                            # '32:3E:A7' Intel LLDP
+                            # '52:7C:6F' Intel LLDP
+                            # '36:73:79' xFusion LLDP
+                            # 'E0:01:A6' Edgecore
+
                                 if '14:44:8F' not in mac_on_dev1['mac'] \
                                     and 'D0:77:CE' not in mac_on_dev1['mac'] \
                                     and 'B6:96:91' not in mac_on_dev1['mac'] \
-                                    and 'E4:9D:73' not in mac_on_dev1['mac']:
+                                    and 'E4:9D:73' not in mac_on_dev1['mac'] \
+                                    and '32:3E:A7' not in mac_on_dev1['mac'] \
+                                    and '52:7C:6F' not in mac_on_dev1['mac'] \
+                                    and '36:73:79' not in mac_on_dev1['mac'] \
+                                    and 'E0:01:A6' not in mac_on_dev1['mac']:
 
                                     absent_macs.append([
                                     dev1['hostname'],
