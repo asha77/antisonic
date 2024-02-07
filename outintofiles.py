@@ -1206,7 +1206,9 @@ def fab_stats_to_json(devices, stats):
 
 
 def report_to_file(date, devices, stats):
-    f_fabric_report = open(os.path.join("report", date + "_fab_report.txt"), "w", encoding='utf-8')
+    pref = devices[0]['hostname'][3:10]
+
+    f_fabric_report = open(os.path.join("report", date + "_" + pref + "_IND_report.txt"), "w", encoding='utf-8')
 
     f_fabric_report.write('=============== REPORT GENERATED AT {0:25s} ============== \n\n\n'.format(date))
     ind = 1
@@ -1254,6 +1256,15 @@ def report_to_file(date, devices, stats):
     f_fabric_report.write('------------------------------------------------------------------------------'
                           '------------------------------------------------------------------------'
                           '------------------------------------------------------------------------\n')
+
+    f_fabric_report.write('\n\n')
+
+    # print errors
+    for dev in devices:
+        f_fabric_report.write('====================================== ERRORS ON {0:20s} ===================================='.format(dev['hostname']))
+        for error in dev['errors']:
+            f_fabric_report.write('{0:100s}'.format(error))
+
 
     f_fabric_report.write('\n\n')
     f_fabric_report.write('--------------------------------------------------------------------------------\n')

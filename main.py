@@ -81,17 +81,14 @@ def main():
                         empty_device['routes'] = regparsers.obtain_route_num(empty_device['vendor_id'], config)
 
                         # get list of cdp neighbours
-# not yet                       txtfsmparsers.get_cdp_neighbours_to_model(empty_device, config, curr_path)
-
+                        # not yet txtfsmparsers.get_cdp_neighbours_to_model(empty_device, config, curr_path)
                         # get list of ports with many MAC-addresses under them
                         # outintofiles.many_macs_file_output(config, curr_path, cdp_neighbours, devinfo)  # optional - to rework
-
                         # get interfaces configuration
-# not yet                       txtfsmparsers.get_interfaces_config_to_model(empty_device, config, curr_path)
-
-# not yet                       txtfsmparsers.get_vlans_configuration_to_model(empty_device, config, curr_path)
-
+                        # not yet txtfsmparsers.get_interfaces_config_to_model(empty_device, config, curr_path)
+                        # not yet txtfsmparsers.get_vlans_configuration_to_model(empty_device, config, curr_path)
                         # add collected device data into array
+
                         devices.append(empty_device)
                 bar()
 
@@ -113,8 +110,8 @@ def main():
         outintofiles.ip_neigh_to_file(devices)
 
         ############ DO ANALYTICS SWL01-SWL02 ###############
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-FAB-SWL01", "TC-YAR-MD6-FAB-SWL02")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-FAB-SWL01", "TC-YAR-MD6-FAB-SWL02")
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-LAB-fab-swl01", "TC-MSK-LAB-fab-swl02")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-LAB-fab-swl01", "TC-MSK-LAB-fab-swl02")
 
         same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
         absent_macs = analytics.remove_absent_mac_dups(absent_macs)
@@ -139,8 +136,8 @@ def main():
 #        stats['swl01_swl02'].append('absent_arps') = len(absent_arps)
 
         ############ DO ANALYTICS SWL03-SWL04 ################
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-FAB-SWL03", "TC-YAR-MD6-FAB-SWL04")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-FAB-SWL03", "TC-YAR-MD6-FAB-SWL04")
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-LAB-fab-swl03", "TC-MSK-LAB-fab-swl04")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-LAB-fab-swl03", "TC-MSK-LAB-fab-swl04")
 
         same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
         absent_macs = analytics.remove_absent_mac_dups(absent_macs)
@@ -160,8 +157,8 @@ def main():
         stats.append(mh_pairs_stats)
 
         ############ DO ANALYTICS SWL05-SWL06 ################
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-FAB-SWL05", "TC-YAR-MD6-FAB-SWL06")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-FAB-SWL05", "TC-YAR-MD6-FAB-SWL06")
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-LAB-fab-swl05", "TC-MSK-LAB-fab-swl06")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-LAB-fab-swl05", "TC-MSK-LAB-fab-swl06")
 
         same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
         absent_macs = analytics.remove_absent_mac_dups(absent_macs)
@@ -183,8 +180,8 @@ def main():
 
 
         ############ DO ANALYTICS BR01-BR02 ################
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-FAB-BR01", "TC-YAR-MD6-FAB-BR02")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-FAB-BR01", "TC-YAR-MD6-FAB-BR02")
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-LAB-FAB-BR01", "TC-MSK-LAB-FAB-BR02")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-LAB-FAB-BR01", "TC-MSK-LAB-FAB-BR02")
 
         same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
         absent_macs = analytics.remove_absent_mac_dups(absent_macs)
@@ -205,7 +202,6 @@ def main():
         stats.append(mh_pairs_stats)
 
         outintofiles.report_to_file(date, devices, stats)
-
         outintofiles.fab_stats_to_json(devices, stats)
         outintofiles.sw_stats_to_json(devices)
 
