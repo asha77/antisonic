@@ -126,7 +126,11 @@ def main():
             'same_macs': len(same_stated_macs),
             'absent_macs': len(absent_macs),
             'incompleted_arps': len(incompleted_arps),
-            'absent_arps': len(absent_arps)
+            'absent_arps': len(absent_arps),
+            'ssmacs': same_stated_macs,
+            'aarps': absent_arps,
+            'iarps': incompleted_arps,
+            'amacs': absent_macs
         }
         stats.append(mh_pairs_stats)
 
@@ -152,7 +156,11 @@ def main():
             'same_macs': len(same_stated_macs),
             'absent_macs': len(absent_macs),
             'incompleted_arps': len(incompleted_arps),
-            'absent_arps': len(absent_arps)
+            'absent_arps': len(absent_arps),
+            'ssmacs': same_stated_macs,
+            'aarps': absent_arps,
+            'iarps': incompleted_arps,
+            'amacs': absent_macs
         }
         stats.append(mh_pairs_stats)
 
@@ -174,14 +182,18 @@ def main():
             'same_macs': len(same_stated_macs),
             'absent_macs': len(absent_macs),
             'incompleted_arps': len(incompleted_arps),
-            'absent_arps': len(absent_arps)
+            'absent_arps': len(absent_arps),
+            'ssmacs': same_stated_macs,
+            'aarps': absent_arps,
+            'iarps': incompleted_arps,
+            'amacs': absent_macs
         }
         stats.append(mh_pairs_stats)
 
 
         ############ DO ANALYTICS BR01-BR02 ################
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-LAB-FAB-BR01", "TC-MSK-LAB-FAB-BR02")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-LAB-FAB-BR01", "TC-MSK-LAB-FAB-BR02")
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-LAB-fab-br01", "TC-MSK-LAB-fab-br02")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-LAB-fab-br01", "TC-MSK-LAB-fab-br02")
 
         same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
         absent_macs = analytics.remove_absent_mac_dups(absent_macs)
@@ -197,18 +209,22 @@ def main():
             'same_macs': len(same_stated_macs),
             'absent_macs': len(absent_macs),
             'incompleted_arps': len(incompleted_arps),
-            'absent_arps': len(absent_arps)
+            'absent_arps': len(absent_arps),
+            'ssmacs': same_stated_macs,
+            'aarps': absent_arps,
+            'iarps': incompleted_arps,
+            'amacs': absent_macs
         }
         stats.append(mh_pairs_stats)
 
         outintofiles.report_to_file(date, devices, stats)
+
         outintofiles.fab_stats_to_json(devices, stats)
         outintofiles.sw_stats_to_json(devices)
 
-        #  print all neighbours from all devices into 'all_neighbours_output.csv' file
+        # print all neighbours from all devices into 'all_neighbours_output.csv' file
         # not yet        outintofiles.all_neighbours_to_file(devices)
-
-        #  print links (connectivity) to all neighbours from all devices into file 'cdp_nei_output.csv'
+        # print links (connectivity) to all neighbours from all devices into file 'cdp_nei_output.csv'
         # not yet        outintofiles.connectivity_to_file(devices)
 
         # print interfaces info into file

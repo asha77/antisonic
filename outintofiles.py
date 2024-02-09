@@ -1261,9 +1261,9 @@ def report_to_file(date, devices, stats):
 
     # print errors
     for dev in devices:
-        f_fabric_report.write('====================================== ERRORS ON {0:20s} ===================================='.format(dev['hostname']))
+        f_fabric_report.write('====================================== ERRORS ON {0:20s} ====================================\n'.format(dev['hostname']))
         for error in dev['errors']:
-            f_fabric_report.write('{0:100s}'.format(error))
+            f_fabric_report.write('{0:100s}\n'.format(error))
 
 
     f_fabric_report.write('\n\n')
@@ -1302,6 +1302,93 @@ def report_to_file(date, devices, stats):
             str(stats[3]['absent_arps'])
         ))
     f_fabric_report.write('--------------------------------------------------------------------------------\n')
+
+
+    f_fabric_report.write('\n\n')
+    f_fabric_report.write('=============== Same Stated MACS ======================\n')
+
+    for stat in stats:
+        for ssmac in stat['ssmacs']:
+            f_fabric_report.write('{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s}    {7:1s}    {8:1s}    {9:1s}    {10:1s}    {11:1s}    {12:1s}    {13:1s}\n'.format(
+                ssmac[0],
+                ssmac[1],
+                ssmac[2],
+                ssmac[3],
+                ssmac[4],
+                ssmac[5],
+                ssmac[6],
+                ssmac[7],
+                ssmac[8],
+                ssmac[9],
+                ssmac[10],
+                ssmac[11],
+                ssmac[12],
+                ssmac[13]
+            ))
+
+    f_fabric_report.write('\n\n')
+    f_fabric_report.write('=============== Absent ARPs ======================\n')
+
+    for stat in stats:
+        for aarp in stat['aarps']:
+            f_fabric_report.write(
+                '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s}    {7:1s}    {8:1s}    {9:1s}    {10:1s}    {11:1s}    {12:1s}    {13:1s}    {14:1s}\n'.format(
+                    aarp[0],
+                    aarp[1],
+                    aarp[2],
+                    aarp[3],
+                    aarp[4],
+                    aarp[5],
+                    aarp[6],
+                    aarp[7],
+                    aarp[8],
+                    aarp[9],
+                    aarp[10],
+                    aarp[11],
+                    aarp[12],
+                    aarp[13],
+                    aarp[14]
+                ))
+
+    f_fabric_report.write('\n\n')
+    f_fabric_report.write('=============== Incompleted ARPs ======================\n')
+
+    for stat in stats:
+        for iarp in stat['iarps']:
+            f_fabric_report.write(
+                '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s}    {7:1s}    {8:1s}    {9:1s}    {10:1s}    {11:1s}    {12:1s}    {13:1s}\n'.format(
+                    iarp[0],
+                    iarp[1],
+                    iarp[2],
+                    iarp[3],
+                    iarp[4],
+                    iarp[5],
+                    iarp[6],
+                    iarp[7],
+                    iarp[8],
+                    iarp[9],
+                    iarp[10],
+                    iarp[11],
+                    iarp[12],
+                    iarp[13]
+                ))
+
+
+    f_fabric_report.write('\n\n')
+    f_fabric_report.write('=============== Absent MACs ======================\n')
+
+    for stat in stats:
+        for amac in stat['amacs']:
+            f_fabric_report.write(
+                '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s}\n'.format(
+                    amac[0],
+                    amac[1],
+                    amac[2],
+                    amac[3],
+                    amac[4],
+                    amac[5],
+                    amac[6]
+                ))
 
     f_fabric_report.close()
 
