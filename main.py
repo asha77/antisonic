@@ -74,6 +74,8 @@ def main():
 
                         txtfsmparsers.get_ip_nei_to_model(empty_device, config, curr_path)
 
+                        txtfsmparsers.get_bgp_routes_to_model(empty_device, config, curr_path)
+
                         empty_device['errors'], empty_device['known_errors'] = regparsers.check_error_log(empty_device['vendor_id'], config)
                         empty_device['all_errors'] = str(regparsers.count_all_errors_from_log(empty_device['vendor_id'], config))
 
@@ -112,8 +114,8 @@ def main():
         outintofiles.ip_neigh_to_file(devices)
 
         ############ DO ANALYTICS SWL01-SWL02 ###############
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-8M1-fab-swl01", "TC-MSK-8M1-fab-swl02")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-8M1-fab-swl01", "TC-MSK-8M1-fab-swl02")
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-fab-swl01", "TC-YAR-MD6-fab-swl02")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-fab-swl01", "TC-YAR-MD6-fab-swl02")
 
         same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
         absent_macs = analytics.remove_absent_mac_dups(absent_macs)
@@ -142,8 +144,8 @@ def main():
 #        stats['swl01_swl02'].append('absent_arps') = len(absent_arps)
 
         ############ DO ANALYTICS SWL03-SWL04 ################
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-8M1-fab-swl03", "TC-MSK-8M1-fab-swl04")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-8M1-fab-swl03", "TC-MSK-8M1-fab-swl04")
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-fab-swl03", "TC-YAR-MD6-fab-swl04")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-fab-swl03", "TC-YAR-MD6-fab-swl04")
 
         same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
         absent_macs = analytics.remove_absent_mac_dups(absent_macs)
@@ -167,8 +169,8 @@ def main():
         stats.append(mh_pairs_stats)
 
         ############ DO ANALYTICS SWL05-SWL06 ################
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-8M1-fab-swl05", "TC-MSK-8M1-fab-swl06")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-8M1-fab-swl05", "TC-MSK-8M1-fab-swl06")
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-fab-swl05", "TC-YAR-MD6-fab-swl06")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-fab-swl05", "TC-YAR-MD6-fab-swl06")
 
         same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
         absent_macs = analytics.remove_absent_mac_dups(absent_macs)
@@ -178,7 +180,6 @@ def main():
         outintofiles.absent_macs_to_file(absent_macs, prefix)
         outintofiles.incompleted_arps_to_file(incompleted_arps, prefix)
         outintofiles.absent_arps_to_file(absent_arps, prefix)
-
 
         mh_pairs_stats = {
             'same_macs': len(same_stated_macs),
@@ -194,8 +195,8 @@ def main():
 
 
         ############ DO ANALYTICS BR01-BR02 ################
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-MSK-8M1-fab-br01", "TC-MSK-8M1-fab-br02")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-MSK-8M1-fab-br01", "TC-MSK-8M1-fab-br02")
+        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-fab-br01", "TC-YAR-MD6-fab-br02")
+        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-fab-br01", "TC-YAR-MD6-fab-br02")
 
         same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
         absent_macs = analytics.remove_absent_mac_dups(absent_macs)
@@ -219,6 +220,14 @@ def main():
         }
         stats.append(mh_pairs_stats)
 
+        m1dyn_m2stat_a1reach_a2stale, m1dyn_m2stat_a1stale_a2reach, m1stat_m2dyn_a1reach_a2stale, m1stat_m2dyn_a1stale_a2reach, m1dyn_m2stat_a1reach_a2reach, m1stat_m2dyn_a1reach_a2reach, stat_m2stat_a1stale_a2stale, record_not_found = analytics.check_mac_arps(devices, "TC-YAR-MD6-fab-swl01", "TC-YAR-MD6-fab-swl02")
+        outintofiles.macarpstates_to_file(date, devices, m1dyn_m2stat_a1reach_a2stale, m1dyn_m2stat_a1stale_a2reach, m1stat_m2dyn_a1reach_a2stale, m1stat_m2dyn_a1stale_a2reach, m1dyn_m2stat_a1reach_a2reach, m1stat_m2dyn_a1reach_a2reach, stat_m2stat_a1stale_a2stale, record_not_found)
+
+
+        ############ ROUTING ANALYTICS ################
+        # allfabric_routes = analytics.get_all_routes(devices)
+
+        ############ REPORTING ################
         outintofiles.report_to_file(date, devices, stats)
 
         outintofiles.fab_stats_to_json(devices, stats)

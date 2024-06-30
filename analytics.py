@@ -55,7 +55,6 @@ def compare_macs(devices, dev_name_1, dev_name_2):
                                                     mac_on_dev2['state']
                                                 ])
                         if not mac_found:
-                            # TODO: do separate filter function
                             # filter Edgecore MACS and LLD handmade MACs
                             # '14:44:8F' Edgecore
                             # 'D0:77:CE' Edgecore
@@ -66,23 +65,30 @@ def compare_macs(devices, dev_name_1, dev_name_2):
                             # '36:73:79' xFusion LLDP
                             # 'E0:01:A6' Edgecore
 
+                            mactype = 'other'
+
                             if '14:44:8F' not in mac_on_dev1['mac'] \
                                     and 'D0:77:CE' not in mac_on_dev1['mac'] \
-                                    and 'B6:96:91' not in mac_on_dev1['mac'] \
                                     and 'E4:9D:73' not in mac_on_dev1['mac'] \
+                                    and 'E0:01:A6' not in mac_on_dev1['mac']:
+                                mactype = 'Edgecore'
+
+                            if 'B6:96:91' not in mac_on_dev1['mac'] \
                                     and '32:3E:A7' not in mac_on_dev1['mac'] \
                                     and '52:7C:6F' not in mac_on_dev1['mac'] \
-                                    and '36:73:79' not in mac_on_dev1['mac'] \
-                                    and 'E0:01:A6' not in mac_on_dev1['mac']:
-                                absent_macs.append([
-                                    dev1['hostname'],
-                                    mac_on_dev1['vlan_id'],
-                                    mac_on_dev1['mac'],
-                                    mac_on_dev1['port'],
-                                    mac_on_dev1['ESID'],
-                                    mac_on_dev1['DIP'],
-                                    mac_on_dev1['state']
-                                    ])
+                                    and '36:73:79' not in mac_on_dev1['mac']:
+                                mactype = 'LLDP'
+
+                            absent_macs.append([
+                                dev1['hostname'],
+                                mac_on_dev1['vlan_id'],
+                                mac_on_dev1['mac'],
+                                mac_on_dev1['port'],
+                                mac_on_dev1['ESID'],
+                                mac_on_dev1['DIP'],
+                                mac_on_dev1['state'],
+                                mactype
+                                ])
                     break
             break
 
@@ -140,8 +146,6 @@ def compare_macs(devices, dev_name_1, dev_name_2):
 
                         if not mac_found:
                             # filter Edgecore MACS and LLD handmade MACs
-                            # TODO: do separate filter function
-                            # filter Edgecore MACS and LLD handmade MACs
                             # '14:44:8F' Edgecore
                             # 'D0:77:CE' Edgecore
                             # 'B6:96:91' Intel LLDP
@@ -151,24 +155,30 @@ def compare_macs(devices, dev_name_1, dev_name_2):
                             # '36:73:79' xFusion LLDP
                             # 'E0:01:A6' Edgecore
 
-                                if '14:44:8F' not in mac_on_dev1['mac'] \
+                            mactype = 'other'
+
+                            if '14:44:8F' not in mac_on_dev1['mac'] \
                                     and 'D0:77:CE' not in mac_on_dev1['mac'] \
-                                    and 'B6:96:91' not in mac_on_dev1['mac'] \
                                     and 'E4:9D:73' not in mac_on_dev1['mac'] \
+                                    and 'E0:01:A6' not in mac_on_dev1['mac']:
+                                mactype = 'Edgecore'
+
+                            if 'B6:96:91' not in mac_on_dev1['mac'] \
                                     and '32:3E:A7' not in mac_on_dev1['mac'] \
                                     and '52:7C:6F' not in mac_on_dev1['mac'] \
-                                    and '36:73:79' not in mac_on_dev1['mac'] \
-                                    and 'E0:01:A6' not in mac_on_dev1['mac']:
+                                    and '36:73:79' not in mac_on_dev1['mac']:
+                                mactype = 'LLDP'
 
-                                    absent_macs.append([
-                                    dev1['hostname'],
-                                    mac_on_dev1['vlan_id'],
-                                    mac_on_dev1['mac'],
-                                    mac_on_dev1['port'],
-                                    mac_on_dev1['ESID'],
-                                    mac_on_dev1['DIP'],
-                                    mac_on_dev1['state']
-                                ])
+                            absent_macs.append([
+                                dev1['hostname'],
+                                mac_on_dev1['vlan_id'],
+                                mac_on_dev1['mac'],
+                                mac_on_dev1['port'],
+                                mac_on_dev1['ESID'],
+                                mac_on_dev1['DIP'],
+                                mac_on_dev1['state'],
+                                mactype
+                            ])
                     break
             break
 
@@ -371,3 +381,141 @@ def compare_arps(devices, dev_name_1, dev_name_2):
             break
 
     return incompleted_arps, absent_arps
+
+
+def check_mac_arps(devices, dev_name_1, dev_name_2):
+
+   m1dyn_m2stat_a1reach_a2stale = []
+   m1dyn_m2stat_a1stale_a2reach = []
+   m1dyn_m2stat_a1reach_a2reach = []
+
+   m1stat_m2dyn_a1reach_a2stale = []
+   m1stat_m2dyn_a1stale_a2reach = []
+   m1stat_m2dyn_a1reach_a2reach = []
+
+   m1stat_m2stat_a1stale_a2stale = []
+
+
+   record_not_found = []
+
+   for dev1 in devices:
+       if dev1['hostname'].upper() == dev_name_1.upper():
+           for dev2 in devices:
+               if dev2['hostname'].upper() == dev_name_2.upper():
+                   # try to find same ip in ip neighbours table
+                   for ip_nei_on_dev1 in dev1['ip_nei_table']:
+                       if ip_nei_on_dev1['state'] == 'NOARP':
+                           continue
+                       record_found = False
+                       for ip_nei_on_dev2 in dev2['ip_nei_table']:
+                           if ip_nei_on_dev2['state'] == 'NOARP':
+                               continue
+                           # try to find same ip neighbour ip on dev2
+                           if ip_nei_on_dev1['ip'] == ip_nei_on_dev2['ip']:
+                               # try to find same ip in arp tables on dev1 and dev2
+                               for arp_on_dev1 in dev1['arp_table']:
+                                   if arp_on_dev1['ip'] == ip_nei_on_dev1['ip']:
+                                       for arp_on_dev2 in dev2['arp_table']:
+                                           if arp_on_dev2['ip'] == ip_nei_on_dev2['ip']:
+                                                # IPs found, try to found macs
+                                                # try to find MAC states as in arp tables on dev1 and dev2
+                                               for mac1 in dev1['mac_table']:
+                                                   if mac1['mac'].upper() == arp_on_dev1['mac'].upper():
+                                                       for mac2 in dev2['mac_table']:
+                                                           if mac2['mac'].upper() == arp_on_dev2['mac'].upper():
+                                                               record_found = True
+                                                               if mac1['state'].upper() == 'DYNAMIC' and mac2['state'].upper() == 'STATIC' and ip_nei_on_dev1['state'].upper() == 'REACHABLE' and ip_nei_on_dev2['state'].upper() == 'STALE':
+                                                                   m1dyn_m2stat_a1reach_a2stale.append([
+                                                                       dev1['hostname'],
+                                                                       mac1,
+                                                                       ip_nei_on_dev1,
+                                                                       dev2['hostname'],
+                                                                       mac2,
+                                                                       ip_nei_on_dev2
+                                                                   ])
+                                                                   record_found = True
+
+                                                               if mac1['state'].upper() == 'DYNAMIC' and mac2['state'].upper() == 'STATIC' and ip_nei_on_dev1['state'].upper() == 'STALE' and ip_nei_on_dev2['state'].upper() == 'REACHABLE':
+                                                                   m1dyn_m2stat_a1stale_a2reach.append([
+                                                                       dev1['hostname'],
+                                                                       mac1,
+                                                                       ip_nei_on_dev1,
+                                                                       dev2['hostname'],
+                                                                       mac2,
+                                                                       ip_nei_on_dev2
+                                                                   ])
+                                                                   record_found = True
+
+                                                               if mac1['state'].upper() == 'STATIC' and mac2['state'].upper() == 'DYNAMIC' and ip_nei_on_dev1['state'].upper() == 'REACHABLE' and ip_nei_on_dev2['state'].upper() == 'STALE':
+                                                                   m1stat_m2dyn_a1reach_a2stale.append([
+                                                                       dev1['hostname'],
+                                                                       mac1,
+                                                                       ip_nei_on_dev1,
+                                                                       dev2['hostname'],
+                                                                       mac2,
+                                                                       ip_nei_on_dev2
+                                                                   ])
+                                                                   record_found = True
+
+                                                               if mac1['state'].upper() == 'STATIC' and mac2['state'].upper() == 'DYNAMIC' and ip_nei_on_dev1['state'].upper() == 'STALE' and ip_nei_on_dev2['state'].upper() == 'REACHABLE':
+                                                                   m1stat_m2dyn_a1stale_a2reach.append([
+                                                                       dev1['hostname'],
+                                                                       mac1,
+                                                                       ip_nei_on_dev1,
+                                                                       dev2['hostname'],
+                                                                       mac2,
+                                                                       ip_nei_on_dev2
+                                                                   ])
+                                                                   record_found = True
+
+                                                               if mac1['state'].upper() == 'DYNAMIC' and mac2['state'].upper() == 'STATIC' and ip_nei_on_dev1['state'].upper() == 'REACHABLE' and ip_nei_on_dev2['state'].upper() == 'REACHABLE':
+                                                                   m1dyn_m2stat_a1reach_a2reach.append([
+                                                                           dev1['hostname'],
+                                                                           mac1,
+                                                                           ip_nei_on_dev1,
+                                                                           dev2['hostname'],
+                                                                           mac2,
+                                                                           ip_nei_on_dev2
+                                                                       ])
+                                                                   record_found = True
+
+                                                               if mac1['state'].upper() == 'STATIC' and mac2['state'].upper() == 'DYNAMIC' and ip_nei_on_dev1['state'].upper() == 'REACHABLE' and ip_nei_on_dev2['state'].upper() == 'REACHABLE':
+                                                                   m1stat_m2dyn_a1reach_a2reach.append([
+                                                                       dev1['hostname'],
+                                                                       mac1,
+                                                                       ip_nei_on_dev1,
+                                                                       dev2['hostname'],
+                                                                       mac2,
+                                                                       ip_nei_on_dev2
+                                                                   ])
+                                                                   record_found = True
+
+
+                                                               if mac1['state'].upper() == 'STATIC' and mac2['state'].upper() == 'STATIC' and ip_nei_on_dev1['state'].upper() == 'STALE' and ip_nei_on_dev2['state'].upper() == 'STALE':
+                                                                   m1stat_m2stat_a1stale_a2stale.append([
+                                                                       dev1['hostname'],
+                                                                       mac1,
+                                                                       ip_nei_on_dev1,
+                                                                       dev2['hostname'],
+                                                                       mac2,
+                                                                       ip_nei_on_dev2
+                                                                   ])
+                                                                   record_found = True
+                       # if all records not found add it here
+                       if not record_found:
+                           record_not_found.append([
+                               dev1['hostname'],
+                               ip_nei_on_dev1
+                           ])
+
+   return m1dyn_m2stat_a1reach_a2stale, m1dyn_m2stat_a1stale_a2reach, m1stat_m2dyn_a1reach_a2stale, m1stat_m2dyn_a1stale_a2reach, m1dyn_m2stat_a1reach_a2reach, m1stat_m2dyn_a1reach_a2reach, m1stat_m2stat_a1stale_a2stale, record_not_found
+
+
+
+def get_all_routes(devices):
+    all_routes = []
+    for dev in devices:
+        if dev['hostname'].upper():
+            return all_routes
+
+    return all_routes

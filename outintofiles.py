@@ -256,7 +256,7 @@ def interfaces_to_file(devices):
             # count physical interfaces
             if regparsers.is_physical_interface(inter['type']):
                 ports_all = ports_all + 1
-                if (inter['status'] == 'connected'):
+                if inter['status'] == 'connected':
                     ports_used = ports_used + 1
 
         str_vlan_db = '"'
@@ -1306,10 +1306,27 @@ def report_to_file(date, devices, stats):
 
     f_fabric_report.write('\n\n')
     f_fabric_report.write('=============== Same Stated MACS ======================\n')
+    f_fabric_report.write(
+        '{0:24s}    {1:6s}    {2:18s}    {3:6s}    {4:30s}    {5:8s}    {6:10s}    {7:24s}    {8:6s}    {9:18s}    {10:6s}    {11:30s}    {12:8s}    {13:10s}\n'.format(
+            'hostname 1',
+            'VLAN',
+            'MAC',
+            'Port',
+            'ES ID',
+            'Dest IP',
+            'MAC1 State',
+            'hostname 2',
+            'VLAN',
+            'MAC',
+            'Port',
+            'ES ID',
+            'Dest IP',
+            'MAC2 State'
+        ))
 
     for stat in stats:
         for ssmac in stat['ssmacs']:
-            f_fabric_report.write('{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s}    {7:1s}    {8:1s}    {9:1s}    {10:1s}    {11:1s}    {12:1s}    {13:1s}\n'.format(
+            f_fabric_report.write('{0:24s}    {1:6s}    {2:18s}    {3:6s}    {4:30s}    {5:8s}    {6:10s}    {7:24s}    {8:6s}    {9:18s}    {10:6s}    {11:30s}    {12:8s}    {13:10s}\n'.format(
                 ssmac[0],
                 ssmac[1],
                 ssmac[2],
@@ -1329,10 +1346,22 @@ def report_to_file(date, devices, stats):
     f_fabric_report.write('\n\n')
     f_fabric_report.write('=============== Absent ARPs ======================\n')
 
+    f_fabric_report.write(
+        '{0:24s}    {1:16s}    {2:8s}    {3:18s}    {4:5s}    {5:5s}    {6:8s}    {7:40s}\n'.format(
+            'hostname',
+            'IP',
+            'type',
+            'MAC',
+            'Flags',
+            'Mask',
+            'VLAN',
+            'State on second switch'
+        ))
+
     for stat in stats:
         for aarp in stat['aarps']:
             f_fabric_report.write(
-                '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s}    {7:1s}    {8:1s}    {9:1s}    {10:1s}    {11:1s}    {12:1s}    {13:1s}    {14:1s}\n'.format(
+                '{0:24s}    {1:16s}    {2:8s}    {3:18s}    {4:5s}    {5:5s}    {6:8s}    {7:40s}\n'.format(
                     aarp[0],
                     aarp[1],
                     aarp[2],
@@ -1340,23 +1369,33 @@ def report_to_file(date, devices, stats):
                     aarp[4],
                     aarp[5],
                     aarp[6],
-                    aarp[7],
-                    aarp[8],
-                    aarp[9],
-                    aarp[10],
-                    aarp[11],
-                    aarp[12],
-                    aarp[13],
-                    aarp[14]
+                    aarp[7]
                 ))
 
     f_fabric_report.write('\n\n')
     f_fabric_report.write('=============== Incompleted ARPs ======================\n')
+    f_fabric_report.write(
+        '{0:24s}    {1:15s}    {2:6s}    {3:12s}    {4:5s}    {5:5s}    {6:10s}    {7:24s}    {8:15s}    {9:6s}    {10:12s}    {11:5s}    {12:5s}    {13:10s}\n'.format(
+            'Hostname',
+            'IP',
+            'HWtype',
+            'MAC state',
+            'Flags',
+            'Mask',
+            'Interface',
+            'Hostname',
+            'IP',
+            'HWtype',
+            'MAC',
+            'Flags',
+            'Mask',
+            'Interface'
+        ))
 
     for stat in stats:
         for iarp in stat['iarps']:
             f_fabric_report.write(
-                '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s}    {7:1s}    {8:1s}    {9:1s}    {10:1s}    {11:1s}    {12:1s}    {13:1s}\n'.format(
+                '{0:24s}    {1:15s}    {2:6s}    {3:12s}    {4:5s}    {5:5s}    {6:10s}    {7:24s}    {8:15s}    {9:6s}    {10:12s}    {11:5s}    {12:5s}    {13:10s}\n'.format(
                     iarp[0],
                     iarp[1],
                     iarp[2],
@@ -1376,19 +1415,242 @@ def report_to_file(date, devices, stats):
 
     f_fabric_report.write('\n\n')
     f_fabric_report.write('=============== Absent MACs ======================\n')
+    f_fabric_report.write(
+        '{0:24s}    {1:6s}    {2:20s}    {3:18s}    {4:30s}    {5:15s}    {6:8s}    {7:1s}\n'.format(
+            'hostname',
+            'vlan_id',
+            'mac',
+            'port',
+            'ES ID',
+            'DIP',
+            'state',
+            'mac type'
+        ))
+
 
     for stat in stats:
         for amac in stat['amacs']:
             f_fabric_report.write(
-                '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s}\n'.format(
+                '{0:24s}    {1:6s}    {2:20s}    {3:18s}    {4:30s}    {5:15s}    {6:8s}    {7:1s}\n'.format(
                     amac[0],
                     amac[1],
                     amac[2],
                     amac[3],
                     amac[4],
                     amac[5],
-                    amac[6]
+                    amac[6],
+                    amac[7]
                 ))
 
     f_fabric_report.close()
 
+
+def macarpstates_to_file(date, devices, m1dyn_m2stat_a1reach_a2stale, m1dyn_m2stat_a1stale_a2reach, m1stat_m2dyn_a1reach_a2stale, m1stat_m2dyn_a1stale_a2reach, m1dyn_m2stat_a1reach_a2reach, m1stat_m2dyn_a1reach_a2reach, m1stat_m2stat_a1stale_a2stale, record_not_found):
+    macs_arp_state_report_report = open(os.path.join("report", date + "_macs_arp_state_report.txt"), "w", encoding='utf-8')
+
+    macs_arp_state_report_report.write('Saving rm1dyn_m2stat_a1reach_a2stale....\n')
+
+    macs_arp_state_report_report.write(
+        '| {0:4s} | {1:20s} | {2:30s} | {3:30s} | {1:20s} | {4:30s} | {5:30s} |\n'.format(
+            'Num',
+            'Dev1 hostname',
+            'Dev1 MAC - state',
+            'Dev1 ARP - state',
+            'Dev2 hostname',
+            'Dev2 MAC - state',
+            'Dev2 ARP - state'
+        ))
+
+    for record in m1dyn_m2stat_a1reach_a2stale:
+        macs_arp_state_report_report.write(
+            '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s} \n'.format(
+                'num',
+                record[0],
+                record[1]['mac'] + ' - ' + record[1]['state'],
+                record[2]['ip'] + ' - ' + record[2]['state'],
+                record[3],
+                record[4]['mac'] + ' - ' + record[4]['state'],
+                record[5]['ip'] + ' - ' + record[5]['state']
+                ))
+
+    macs_arp_state_report_report.write('\n\n\n\n')
+    macs_arp_state_report_report.write('Saving m1dyn_m2stat_a1stale_a2reach....\n')
+
+    macs_arp_state_report_report.write(
+        '| {0:4s} | {1:20s} | {2:30s} | {3:30s} | {1:20s} | {4:30s} | {5:30s} |\n'.format(
+            'Num',
+            'Dev1 hostname',
+            'Dev1 MAC - state',
+            'Dev1 ARP - state',
+            'Dev2 hostname',
+            'Dev2 MAC - state',
+            'Dev2 ARP - state'
+        ))
+
+    for record in m1dyn_m2stat_a1stale_a2reach:
+        macs_arp_state_report_report.write(
+            '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s} \n'.format(
+                'num',
+                record[0],
+                record[1]['mac'] + ' - ' + record[1]['state'],
+                record[2]['ip'] + ' - ' + record[2]['state'],
+                record[3],
+                record[4]['mac'] + ' - ' + record[4]['state'],
+                record[5]['ip'] + ' - ' + record[5]['state']
+                ))
+
+    macs_arp_state_report_report.write('\n\n\n\n')
+    macs_arp_state_report_report.write('Saving m1stat_m2dyn_a1reach_a2stale....\n')
+
+    macs_arp_state_report_report.write(
+        '| {0:4s} | {1:20s} | {2:30s} | {3:30s} | {1:20s} | {4:30s} | {5:30s} |\n'.format(
+            'Num',
+            'Dev1 hostname',
+            'Dev1 MAC - state',
+            'Dev1 ARP - state',
+            'Dev2 hostname',
+            'Dev2 MAC - state',
+            'Dev2 ARP - state'
+        ))
+
+    for record in m1stat_m2dyn_a1reach_a2stale:
+        macs_arp_state_report_report.write(
+            '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s} \n'.format(
+                'num',
+                record[0],
+                record[1]['mac'] + ' - ' + record[1]['state'],
+                record[2]['ip'] + ' - ' + record[2]['state'],
+                record[3],
+                record[4]['mac'] + ' - ' + record[4]['state'],
+                record[5]['ip'] + ' - ' + record[5]['state']
+                ))
+
+    macs_arp_state_report_report.write('\n\n\n\n')
+    macs_arp_state_report_report.write('Saving m1stat_m2dyn_a1stale_a2reach....\n')
+
+    macs_arp_state_report_report.write(
+        '| {0:4s} | {1:20s} | {2:30s} | {3:30s} | {1:20s} | {4:30s} | {5:30s} |\n'.format(
+            'Num',
+            'Dev1 hostname',
+            'Dev1 MAC - state',
+            'Dev1 ARP - state',
+            'Dev2 hostname',
+            'Dev2 MAC - state',
+            'Dev2 ARP - state'
+        ))
+
+    for record in m1stat_m2dyn_a1stale_a2reach:
+        macs_arp_state_report_report.write(
+            '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s} \n'.format(
+                'num',
+                record[0],
+                record[1]['mac'] + ' - ' + record[1]['state'],
+                record[2]['ip'] + ' - ' + record[2]['state'],
+                record[3],
+                record[4]['mac'] + ' - ' + record[4]['state'],
+                record[5]['ip'] + ' - ' + record[5]['state']
+                ))
+
+
+
+    macs_arp_state_report_report.write('\n\n\n\n')
+    macs_arp_state_report_report.write('Saving m1dyn_m2stat_a1reach_a2reach....\n')
+
+    macs_arp_state_report_report.write(
+        '| {0:4s} | {1:20s} | {2:30s} | {3:30s} | {1:20s} | {4:30s} | {5:30s} |\n'.format(
+            'Num',
+            'Dev1 hostname',
+            'Dev1 MAC - state',
+            'Dev1 ARP - state',
+            'Dev2 hostname',
+            'Dev2 MAC - state',
+            'Dev2 ARP - state'
+        ))
+
+    for record in m1dyn_m2stat_a1reach_a2reach:
+        macs_arp_state_report_report.write(
+            '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s} \n'.format(
+                'num',
+                record[0],
+                record[1]['mac'] + ' - ' + record[1]['state'],
+                record[2]['ip'] + ' - ' + record[2]['state'],
+                record[3],
+                record[4]['mac'] + ' - ' + record[4]['state'],
+                record[5]['ip'] + ' - ' + record[5]['state']
+                ))
+
+    macs_arp_state_report_report.write('\n\n\n\n')
+    macs_arp_state_report_report.write('Saving m1stat_m2dyn_a1reach_a2reach....\n')
+
+    macs_arp_state_report_report.write(
+        '| {0:4s} | {1:20s} | {2:30s} | {3:30s} | {1:20s} | {4:30s} | {5:30s} |\n'.format(
+            'Num',
+            'Dev1 hostname',
+            'Dev1 MAC - state',
+            'Dev1 ARP - state',
+            'Dev2 hostname',
+            'Dev2 MAC - state',
+            'Dev2 ARP - state'
+        ))
+
+    for record in m1stat_m2dyn_a1reach_a2reach:
+        macs_arp_state_report_report.write(
+            '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s} \n'.format(
+                'num',
+                record[0],
+                record[1]['mac'] + ' - ' + record[1]['state'],
+                record[2]['ip'] + ' - ' + record[2]['state'],
+                record[3],
+                record[4]['mac'] + ' - ' + record[4]['state'],
+                record[5]['ip'] + ' - ' + record[5]['state']
+                ))
+
+
+    macs_arp_state_report_report.write('\n\n\n\n')
+    macs_arp_state_report_report.write('Saving m1stat_m2stat_a1stale_a2stale....\n')
+
+    macs_arp_state_report_report.write(
+        '| {0:4s} | {1:20s} | {2:30s} | {3:30s} | {1:20s} | {4:30s} | {5:30s} |\n'.format(
+            'Num',
+            'Dev1 hostname',
+            'Dev1 MAC - state',
+            'Dev1 ARP - state',
+            'Dev2 hostname',
+            'Dev2 MAC - state',
+            'Dev2 ARP - state'
+        ))
+
+    for record in m1stat_m2stat_a1stale_a2stale:
+        macs_arp_state_report_report.write(
+            '{0:1s}    {1:1s}    {2:1s}    {3:1s}    {4:1s}    {5:1s}    {6:1s} \n'.format(
+                'num',
+                record[0],
+                record[1]['mac'] + ' - ' + record[1]['state'],
+                record[2]['ip'] + ' - ' + record[2]['state'],
+                record[3],
+                record[4]['mac'] + ' - ' + record[4]['state'],
+                record[5]['ip'] + ' - ' + record[5]['state']
+                ))
+
+
+
+    macs_arp_state_report_report.write('\n\n\n\n')
+    macs_arp_state_report_report.write('record_not_found....\n')
+
+    macs_arp_state_report_report.write(
+        '| {0:4s} | {1:20s} | {2:30s} |\n'.format(
+            'Num',
+            'Dev1 hostname',
+            'Dev1 ip nei - state',
+        ))
+
+
+    for record in record_not_found:
+        macs_arp_state_report_report.write(
+            '{0:1s}    {1:1s}    {2:1s} \n'.format(
+                'num',
+                record[0],
+                record[1]['ip'] + ' - ' + record[1]['state']
+                ))
+
+    macs_arp_state_report_report.close()
