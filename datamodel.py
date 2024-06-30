@@ -30,6 +30,7 @@ config_entity = {
     'interfaces': [],
     'default-gateway': '',                          # 10.2.254.1
     'routing_table': [],                            # {'dest_net': '192.168.0.0/24', 'protocol': 'static', 'vrf': 'vrf_name'}
+    'bgp_l2vpn_table': [],                          # {'vrf': 'default', 'status': 'valid|suppressed|damped|history|best|multipath|internal|RIBFail|Stale|Removed', 'network': '0.0.0.0/0', 'next-hop': '100.64.4.130', 'next-hop-self': 'yes', 'metric': '0', 'local_pref': '50', 'weight': '0', 'as-path': '4292608010 4292608012', 'origin': 'IGP|EGP|incomplete'}
     'mac_table': [],                                # {'vlan': 'vlan_id', 'mac': 'aa:aa:aa:aa:aa:aa', 'type': 'static', 'interface': 'Gi1/0/3'}
     'arp_table': [],                                # {'address': '192.168.0.1', 'mac': 'aa:aa:aa:aa:aa:aa', 'interface': 'static'}
     'esi_table': [],                                # {'esi': '03:aa:1c:73:00:01:01:00:00:65', 'type': 'R', 'port': 'PortChannel1', 'status': 'up', 'vteps': '192.168.1'}

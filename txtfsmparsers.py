@@ -1047,3 +1047,85 @@ def get_ip_nei_to_model(empty_device, config, curr_path):
             })
 
     return empty_device
+
+
+def get_bgp_routes_to_model(empty_device, config, curr_path):
+    if empty_device['os'] == 'sonic_edgecore':
+        bgp_routes_template = open(os.path.join(curr_path, "txtfsm_templates", "edgecore", "edgecore_ip_bgp_vrf_all.template"))
+        fsm = textfsm.TextFSM(bgp_routes_template)
+        fsm.Reset()
+        bgp_routes = fsm.ParseText(config)
+
+        # {'vrf': 'default', 'status': 'valid|suppressed|damped|history|best|multipath|internal|RIBFail|Stale|Removed', 'network': '0.0.0.0/0', 'next-hop': '100.64.4.130', 'next-hop-self': 'yes', 'metric': '0', 'local_pref': '50', 'weight': '0', 'as-path': '4292608010 4292608012', 'origin': 'IGP|EGP|incomplete'}
+        # 'as-path': '4292608010 4292608012', 'origin': 'IGP|EGP|incomplete'}
+
+        for route in bgp_routes:
+            if route[2] == '':
+                status = verbose_status(route[1])
+            else:
+                status = verbose_status(route[1])+','+verbose_status(route[2])
+
+            if route[5] == '<':
+                nhs = 'yes'
+            else:
+                nhs = ''
+
+            if route[10] == 'i':
+                org = 'IGP'
+            else:
+                if route[10] == 'e':
+                    org = 'EGP'
+                else:
+                    if route[10] == '?':
+                        org = 'incomplete'
+                    else:
+                        org = route[10]
+
+            empty_device['bgp_l2vpn_table'].append({
+                'vrf': route[0],
+                'status': status,
+                'network': route[3],
+                'nexthop': route[4],
+                'next-hop-self': nhs,
+                'metric': route[6],
+                'local_pref': route[7],
+                'weight': route[8],
+                'as-path': route[9],
+                'origin': org
+            })
+    return empty_device
+
+
+def verbose_status(sign):
+    # 'status': 'valid|suppressed|damped|history|best|multipath|internal|RIBFail|Stale|Removed'
+    if sign == '*':
+        return 'valid'
+    else:
+        if sign == 's':
+            return 'suppressed'
+        else:
+            if sign == 'd':
+                return 'damped'
+            else:
+                if sign == 'h':
+                    return 'history'
+                else:
+                    if sign == '*':
+                        return 'best'
+                    else:
+                        if sign == '=':
+                            return 'multipath'
+                        else:
+                            if sign == 'i':
+                                return 'internal'
+                            else:
+                                if sign == 'r':
+                                    return 'RIBFail'
+                                else:
+                                    if sign == 'S':
+                                        return 'Stale'
+                                    else:
+                                        if sign == 'R':
+                                            return 'Removed'
+                                        else:
+                                            return sign

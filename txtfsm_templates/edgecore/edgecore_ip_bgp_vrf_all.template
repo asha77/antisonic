@@ -1,0 +1,45 @@
+Value Filldown VRF (\S+)
+Value Filldown STATUS ([sdh*>=irSR])
+Value Filldown PATH_SELECTION ([sdh*>=irSR ])
+Value Filldown NETWORK ((((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4})\/\d*)
+Value Required NEXT_HOP (((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4})
+Value NH_SELF ([<]*)
+Value Filldown METRIC (\d*)
+Value Filldown LOCAL_PREF (\d*)
+Value Filldown WEIGHT (\d*)
+Value AS_PATH ((\d+\s)*)
+Value ORIGIN ([ie\?])
+
+Start
+  # Since using mostly position, play it safe and ensure we see header first
+  #^\s*Instance\s${VRF}: -> BGP_Records
+  #^\s+Network\s+Next Hop\s+Metric\s+LocPrf\s+Weight\s+Path
+  ^.*show\sbgp\sl2vpn\sevpn -> VRF_start
+
+VRF_start
+  ^Instance\s${VRF}: -> BGP_routes
+
+BGP_routes
+  ^\s*${STATUS}${PATH_SELECTION}\s+${NETWORK}$$ -> Continue
+  ^\s+${NEXT_HOP}${NH_SELF}\s+${METRIC}\s+${LOCAL_PREF}\s+${WEIGHT}\s+${AS_PATH}${ORIGIN} -> Record
+  ^\s*${STATUS}${PATH_SELECTION}\s+${NETWORK}\s+${NEXT_HOP}${NH_SELF}\s+${METRIC}\s+${LOCAL_PREF}\s+${WEIGHT}\s+${AS_PATH}${ORIGIN} -> Record
+  ^\s*${STATUS}${PATH_SELECTION}\s+${NEXT_HOP}${NH_SELF}\s+${METRIC}\s+${LOCAL_PREF}\s+${WEIGHT}\s+${AS_PATH}${ORIGIN} -> Record
+  ^Displayed\s+\d+\sroutes\sand\s\d+\stotal\spaths$$ -> VRF_start
+  # Account for show ip bgp vpnv4 vrf command
+  # ^Route\s+Distinguisher
+  # Match if subnet is 17,18 characters long, creates two lines
+  # Example: *>i 10.104.192.208/29
+  # ^\s{0,1}${STATUS}${PATH_SELECTION}${ROUTE_SOURCE}\s{0,2}(?=${NETWORK}).{17,18}$$ -> Record
+  # Compliment to previous, status, path_selection, route_source, network is filldown.
+  # Example:                     200.200.186.194          0    100  50000 64801 64808 64608 64601 64787 i
+  # ^\s{20,25}(?=${NEXT_HOP}).{15}\s(?=\s{0,10}${METRIC}).{10}\s(?=\s{0,6}${LOCAL_PREF}).{6}\s(?=\s{0,6}${WEIGHT}).{6}\s*${AS_PATH}\s*${ORIGIN}$$ -> Record
+  #^\s*${STATUS}${PATH_SELECTION}\s+${NEXT_HOP}\s+${METRIC}\s+${LOCAL_PREF}\s+${WEIGHT}\s+${AS_PATH}\s+${ORIGIN} -> Record
+  #^\s*${STATUS}${PATH_SELECTION}\s+${NEXT_HOP}\s+${METRIC}\s+${LOCAL_PREF}\s+${WEIGHT}\s+${AS_PATH}${ORIGIN} -> Next
+  #
+  # Match first when there is no network, since previous line had it already (compliment and filldown below)
+  # Example: *>                  0.0.0.0                  0         32768 i
+  # ^\s{0,1}${STATUS}${PATH_SELECTION}${ROUTE_SOURCE}\s{0,2}\s{16}\s(?=${NEXT_HOP}).{15}\s(?=\s{0,10}${METRIC}).{10}\s(?=\s{0,6}${LOCAL_PREF}).{6}\s(?=\s{0,6}${WEIGHT}).{6}\s*${AS_PATH}\s*${ORIGIN}$$ -> Record
+  #
+  # Full normal example. metric, and as_path might not exist, regex defaults to blank line.
+  # Example: * i172.16.1.0/24    172.16.1.2               0    100      0 i
+  # ^\s{0,1}${STATUS}${PATH_SELECTION}${ROUTE_SOURCE}\s{0,2}(?=${NETWORK}).{16}\s(?=${NEXT_HOP}).{15}\s(?=\s{0,10}${METRIC}).{10}\s(?=\s{0,6}${LOCAL_PREF}).{6}\s(?=\s{0,6}${WEIGHT}).{6}\s*${AS_PATH}\s*${ORIGIN}$$ -> Record
