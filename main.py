@@ -223,7 +223,6 @@ def main():
         m1dyn_m2stat_a1reach_a2stale, m1dyn_m2stat_a1stale_a2reach, m1stat_m2dyn_a1reach_a2stale, m1stat_m2dyn_a1stale_a2reach, m1dyn_m2stat_a1reach_a2reach, m1stat_m2dyn_a1reach_a2reach, stat_m2stat_a1stale_a2stale, record_not_found = analytics.check_mac_arps(devices, "TC-YAR-MD6-fab-swl01", "TC-YAR-MD6-fab-swl02")
         outintofiles.macarpstates_to_file(date, devices, m1dyn_m2stat_a1reach_a2stale, m1dyn_m2stat_a1stale_a2reach, m1stat_m2dyn_a1reach_a2stale, m1stat_m2dyn_a1stale_a2reach, m1dyn_m2stat_a1reach_a2reach, m1stat_m2dyn_a1reach_a2reach, stat_m2stat_a1stale_a2stale, record_not_found)
 
-
         ############ ROUTING ANALYTICS ################
         # allfabric_routes = analytics.get_all_routes(devices)
 
