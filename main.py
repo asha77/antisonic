@@ -47,7 +47,7 @@ def main():
     parser = createparser()
     namespace = parser.parse_args()
     curr_path = os.path.abspath(os.getcwd())
-    multihoming_pairs = get_fab_topology(os.path.join(curr_path, 'fabric.topology'))
+    multihoming_pairs = get_fab_topology(os.path.join(curr_path, 'fabric.topology_sample'))
 
     if namespace.configdir:
         os.chdir(namespace.configdir)
