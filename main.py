@@ -26,14 +26,29 @@ def createparser():
     return parser
 
 
+def get_fab_topology(file_path):
+    multihoming_pairs = []
+
+    with open(file_path) as f:
+        for line in f.readlines():
+            if line == ['\n'] or line == [' \n']:
+                continue
+            line = line.strip('\n\r')
+            str = line.split(";")
+            if str[0] == 'MH_PAIR':
+                multihoming_pairs.append(str)
+    return multihoming_pairs
+
+
 def main():
     mh_pairs_stats = {}
     stats = []
 
     parser = createparser()
     namespace = parser.parse_args()
-
     curr_path = os.path.abspath(os.getcwd())
+    multihoming_pairs = get_fab_topology(os.path.join(curr_path, 'fabric.topology'))
+
     if namespace.configdir:
         os.chdir(namespace.configdir)
 
@@ -113,115 +128,38 @@ def main():
         # print ip neighbours to file all_ip_neighbours.csv
         outintofiles.ip_neigh_to_file(devices)
 
-        ############ DO ANALYTICS SWL01-SWL02 ###############
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-fab-swl01", "TC-YAR-MD6-fab-swl02")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-fab-swl01", "TC-YAR-MD6-fab-swl02")
+        for mpair in multihoming_pairs:
+            same_stated_macs, absent_macs = analytics.compare_macs(devices, mpair[1], mpair[2])
+            incompleted_arps, absent_arps = analytics.compare_arps(devices, mpair[1], mpair[2])
 
-        same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
-        absent_macs = analytics.remove_absent_mac_dups(absent_macs)
+            same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
+            absent_macs = analytics.remove_absent_mac_dups(absent_macs)
 
-        prefix = '_SWL01_SWL02'
-        outintofiles.same_stated_macs_to_file(same_stated_macs, prefix)
-        outintofiles.absent_macs_to_file(absent_macs, prefix)
-        outintofiles.incompleted_arps_to_file(incompleted_arps, prefix)
-        outintofiles.absent_arps_to_file(absent_arps, prefix)
+            prefix = mpair[3]
+            outintofiles.same_stated_macs_to_file(same_stated_macs, prefix)
+            outintofiles.absent_macs_to_file(absent_macs, prefix)
+            outintofiles.incompleted_arps_to_file(incompleted_arps, prefix)
+            outintofiles.absent_arps_to_file(absent_arps, prefix)
 
-        mh_pairs_stats = {
-            'same_macs': len(same_stated_macs),
-            'absent_macs': len(absent_macs),
-            'incompleted_arps': len(incompleted_arps),
-            'absent_arps': len(absent_arps),
-            'ssmacs': same_stated_macs,
-            'aarps': absent_arps,
-            'iarps': incompleted_arps,
-            'amacs': absent_macs
-        }
-        stats.append(mh_pairs_stats)
+            mh_pairs_stats = {
+                'same_macs': len(same_stated_macs),
+                'absent_macs': len(absent_macs),
+                'incompleted_arps': len(incompleted_arps),
+                'absent_arps': len(absent_arps),
+                'ssmacs': same_stated_macs,
+                'aarps': absent_arps,
+                'iarps': incompleted_arps,
+                'amacs': absent_macs
+            }
+            stats.append(mh_pairs_stats)
 
 #        stats['swl01_swl02'].append('same_macs') = len(same_stated_macs)
 #        stats['swl01_swl02'].append('absent_macs') = len(absent_macs)
 #        stats['swl01_swl02'].append('incompleted_arps') = len(incompleted_arps)
 #        stats['swl01_swl02'].append('absent_arps') = len(absent_arps)
-
-        ############ DO ANALYTICS SWL03-SWL04 ################
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-fab-swl03", "TC-YAR-MD6-fab-swl04")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-fab-swl03", "TC-YAR-MD6-fab-swl04")
-
-        same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
-        absent_macs = analytics.remove_absent_mac_dups(absent_macs)
-
-        prefix = '_SWL03_SWL04'
-        outintofiles.same_stated_macs_to_file(same_stated_macs, prefix)
-        outintofiles.absent_macs_to_file(absent_macs, prefix)
-        outintofiles.incompleted_arps_to_file(incompleted_arps, prefix)
-        outintofiles.absent_arps_to_file(absent_arps, prefix)
-
-        mh_pairs_stats = {
-            'same_macs': len(same_stated_macs),
-            'absent_macs': len(absent_macs),
-            'incompleted_arps': len(incompleted_arps),
-            'absent_arps': len(absent_arps),
-            'ssmacs': same_stated_macs,
-            'aarps': absent_arps,
-            'iarps': incompleted_arps,
-            'amacs': absent_macs
-        }
-        stats.append(mh_pairs_stats)
-
-        ############ DO ANALYTICS SWL05-SWL06 ################
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-fab-swl05", "TC-YAR-MD6-fab-swl06")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-fab-swl05", "TC-YAR-MD6-fab-swl06")
-
-        same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
-        absent_macs = analytics.remove_absent_mac_dups(absent_macs)
-
-        prefix = '_SWL05_SWL06'
-        outintofiles.same_stated_macs_to_file(same_stated_macs, prefix)
-        outintofiles.absent_macs_to_file(absent_macs, prefix)
-        outintofiles.incompleted_arps_to_file(incompleted_arps, prefix)
-        outintofiles.absent_arps_to_file(absent_arps, prefix)
-
-        mh_pairs_stats = {
-            'same_macs': len(same_stated_macs),
-            'absent_macs': len(absent_macs),
-            'incompleted_arps': len(incompleted_arps),
-            'absent_arps': len(absent_arps),
-            'ssmacs': same_stated_macs,
-            'aarps': absent_arps,
-            'iarps': incompleted_arps,
-            'amacs': absent_macs
-        }
-        stats.append(mh_pairs_stats)
-
-
-        ############ DO ANALYTICS BR01-BR02 ################
-        same_stated_macs, absent_macs = analytics.compare_macs(devices, "TC-YAR-MD6-fab-br01", "TC-YAR-MD6-fab-br02")
-        incompleted_arps, absent_arps = analytics.compare_arps(devices, "TC-YAR-MD6-fab-br01", "TC-YAR-MD6-fab-br02")
-
-        same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
-        absent_macs = analytics.remove_absent_mac_dups(absent_macs)
-
-        prefix = '_BR01_BR02'
-
-        outintofiles.same_stated_macs_to_file(same_stated_macs, prefix)
-        outintofiles.absent_macs_to_file(absent_macs, prefix)
-        outintofiles.incompleted_arps_to_file(incompleted_arps, prefix)
-        outintofiles.absent_arps_to_file(absent_arps, prefix)
-
-        mh_pairs_stats = {
-            'same_macs': len(same_stated_macs),
-            'absent_macs': len(absent_macs),
-            'incompleted_arps': len(incompleted_arps),
-            'absent_arps': len(absent_arps),
-            'ssmacs': same_stated_macs,
-            'aarps': absent_arps,
-            'iarps': incompleted_arps,
-            'amacs': absent_macs
-        }
-        stats.append(mh_pairs_stats)
-
-        m1dyn_m2stat_a1reach_a2stale, m1dyn_m2stat_a1stale_a2reach, m1stat_m2dyn_a1reach_a2stale, m1stat_m2dyn_a1stale_a2reach, m1dyn_m2stat_a1reach_a2reach, m1stat_m2dyn_a1reach_a2reach, stat_m2stat_a1stale_a2stale, record_not_found = analytics.check_mac_arps(devices, "TC-YAR-MD6-fab-swl01", "TC-YAR-MD6-fab-swl02")
-        outintofiles.macarpstates_to_file(date, devices, m1dyn_m2stat_a1reach_a2stale, m1dyn_m2stat_a1stale_a2reach, m1stat_m2dyn_a1reach_a2stale, m1stat_m2dyn_a1stale_a2reach, m1dyn_m2stat_a1reach_a2reach, m1stat_m2dyn_a1reach_a2reach, stat_m2stat_a1stale_a2stale, record_not_found)
+    # todo:  make correct saving results here
+            # m1dyn_m2stat_a1reach_a2stale, m1dyn_m2stat_a1stale_a2reach, m1stat_m2dyn_a1reach_a2stale, m1stat_m2dyn_a1stale_a2reach, m1dyn_m2stat_a1reach_a2reach, m1stat_m2dyn_a1reach_a2reach, stat_m2stat_a1stale_a2stale, record_not_found = analytics.check_mac_arps(devices, mpair[1], mpair[2])
+            # outintofiles.macarpstates_to_file(date, devices, m1dyn_m2stat_a1reach_a2stale, m1dyn_m2stat_a1stale_a2reach, m1stat_m2dyn_a1reach_a2stale, m1stat_m2dyn_a1stale_a2reach, m1dyn_m2stat_a1reach_a2reach, m1stat_m2dyn_a1reach_a2reach, stat_m2stat_a1stale_a2stale, record_not_found)
 
         ############ ROUTING ANALYTICS ################
         # allfabric_routes = analytics.get_all_routes(devices)
