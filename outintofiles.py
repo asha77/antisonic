@@ -1265,42 +1265,31 @@ def report_to_file(date, devices, stats):
         for error in dev['errors']:
             f_fabric_report.write('{0:100s}\n'.format(error))
 
+    title = '|       Metric       |'
+    same_stated_macs =  '|  Same stated MACs  |'
+    absent_macs = '|  Absent MACs       | '
+    inc_arps = '|  Incompleted ARPs  |'
+    abs_arps = '|  Absent ARPs       |'
+
+    'Hello, {}!'.format('Vasya')
+
+
+    for st in stats:
+        title = title + ' {0:3s} |'.format(st['mh_pair'])
+        same_stated_macs = same_stated_macs + '    {0:5d}    |'.format(st['same_macs'])
+        absent_macs = absent_macs + '    {0:5d}    |'.format(st['absent_macs'])
+        inc_arps = inc_arps + '    {0:5d}    |'.format(st['incompleted_arps'])
+        abs_arps = abs_arps + '    {0:5d}    |'.format(st['absent_arps'])
+
 
     f_fabric_report.write('\n\n')
     f_fabric_report.write('--------------------------------------------------------------------------------\n')
-    f_fabric_report.write('|        Metric        | SWL01-SWL02 | SWL03-SWL04 | SWL05-SWL06 |  BR01-BR02  |\n')
+    f_fabric_report.write(title  + '\n')
     f_fabric_report.write('--------------------------------------------------------------------------------\n')
-    f_fabric_report.write('| {0:20s} | {1:11s} | {2:11s} | {3:11s} | {4:11s} |\n'.format(
-            'Same stated MACs',
-            str(stats[0]['same_macs']),
-            str(stats[1]['same_macs']),
-            str(stats[2]['same_macs']),
-            str(stats[3]['same_macs'])
-        ))
-
-    f_fabric_report.write('| {0:20s} | {1:11s} | {2:11s} | {3:11s} | {4:11s} |\n'.format(
-            'Absent MACs',
-            str(stats[0]['absent_macs']),
-            str(stats[1]['absent_macs']),
-            str(stats[2]['absent_macs']),
-            str(stats[3]['absent_macs'])
-        ))
-
-    f_fabric_report.write('| {0:20s} | {1:11s} | {2:11s} | {3:11s} | {4:11s} |\n'.format(
-            'Incompleted ARPs',
-            str(stats[0]['incompleted_arps']),
-            str(stats[1]['incompleted_arps']),
-            str(stats[2]['incompleted_arps']),
-            str(stats[3]['incompleted_arps'])
-        ))
-
-    f_fabric_report.write('| {0:20s} | {1:11s} | {2:11s} | {3:11s} | {4:11s} |\n'.format(
-            'Absent ARPs',
-            str(stats[0]['absent_arps']),
-            str(stats[1]['absent_arps']),
-            str(stats[2]['absent_arps']),
-            str(stats[3]['absent_arps'])
-        ))
+    f_fabric_report.write(same_stated_macs + '\n')
+    f_fabric_report.write(absent_macs + '\n')
+    f_fabric_report.write(inc_arps + '\n')
+    f_fabric_report.write(abs_arps + '\n')
     f_fabric_report.write('--------------------------------------------------------------------------------\n')
 
 

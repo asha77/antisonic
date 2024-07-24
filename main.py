@@ -143,6 +143,7 @@ def main():
             outintofiles.absent_arps_to_file(absent_arps, prefix)
 
             mh_pairs_stats = {
+                'mh_pair': mpair[3][1:],
                 'same_macs': len(same_stated_macs),
                 'absent_macs': len(absent_macs),
                 'incompleted_arps': len(incompleted_arps),
@@ -152,6 +153,7 @@ def main():
                 'iarps': incompleted_arps,
                 'amacs': absent_macs
             }
+
             stats.append(mh_pairs_stats)
 
 #        stats['swl01_swl02'].append('same_macs') = len(same_stated_macs)
