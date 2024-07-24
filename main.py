@@ -12,6 +12,7 @@ import copy
 from alive_progress import alive_bar
 from datetime import datetime
 
+
 compliance_result = []
 devices = []
 empty_device = {}
