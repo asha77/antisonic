@@ -136,11 +136,15 @@ def main():
             same_stated_macs = analytics.remove_same_mac_dups(same_stated_macs)
             absent_macs = analytics.remove_absent_mac_dups(absent_macs)
 
-            prefix = mpair[3]
-            outintofiles.same_stated_macs_to_file(same_stated_macs, prefix)
-            outintofiles.absent_macs_to_file(absent_macs, prefix)
-            outintofiles.incompleted_arps_to_file(incompleted_arps, prefix)
-            outintofiles.absent_arps_to_file(absent_arps, prefix)
+            # prefix = mpair[3] - switch pair prefix
+            outintofiles.same_stated_macs_to_file(same_stated_macs, mpair[3])
+            outintofiles.absent_macs_to_file(absent_macs, mpair[3])
+            outintofiles.incompleted_arps_to_file(incompleted_arps, mpair[3])
+            outintofiles.absent_arps_to_file(absent_arps, mpair[3])
+
+            # filter absent MACs from final report - remove DIP and LLDP MACs
+            absent_macs = analytics.remove_dip_lldp_macs(absent_macs)
+
 
             mh_pairs_stats = {
                 'mh_pair': mpair[3][1:],
@@ -153,7 +157,6 @@ def main():
                 'iarps': incompleted_arps,
                 'amacs': absent_macs
             }
-
             stats.append(mh_pairs_stats)
 
 #        stats['swl01_swl02'].append('same_macs') = len(same_stated_macs)

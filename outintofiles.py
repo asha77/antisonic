@@ -1043,7 +1043,6 @@ def same_stated_macs_to_file(same_stated_macs, file_suffix):
 
 def absent_macs_to_file(absent_macs, file_suffix):
     f_abs_macs = open(os.path.join("output", "absent_macs" + file_suffix + ".csv"), "w")
-
     for mac in absent_macs:
         f_abs_macs.write('{0:1s};{1:1s};{2:1s};{3:1s};{4:1s};{5:1s};{6:1s}\n'.format(
             mac[0],
@@ -1052,7 +1051,8 @@ def absent_macs_to_file(absent_macs, file_suffix):
             mac[3],
             mac[4],
             mac[5],
-            mac[6]
+            mac[6],
+            mac[7]
         ))
     f_abs_macs.close()
 
@@ -1271,8 +1271,6 @@ def report_to_file(date, devices, stats):
     inc_arps = '|  Incompleted ARPs  |'
     abs_arps = '|  Absent ARPs       |'
 
-    'Hello, {}!'.format('Vasya')
-
 
     for st in stats:
         title = title + ' {0:3s} |'.format(st['mh_pair'])
@@ -1284,7 +1282,7 @@ def report_to_file(date, devices, stats):
 
     f_fabric_report.write('\n\n')
     f_fabric_report.write('--------------------------------------------------------------------------------\n')
-    f_fabric_report.write(title  + '\n')
+    f_fabric_report.write(title + '\n')
     f_fabric_report.write('--------------------------------------------------------------------------------\n')
     f_fabric_report.write(same_stated_macs + '\n')
     f_fabric_report.write(absent_macs + '\n')

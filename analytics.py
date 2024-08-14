@@ -79,6 +79,13 @@ def compare_macs(devices, dev_name_1, dev_name_2):
                                     and '36:73:79' not in mac_on_dev1['mac']:
                                 mactype = 'LLDP'
 
+                            if '100.64.68.' not in mac_on_dev1['DIP'] \
+                                    and '100.64.100.' not in mac_on_dev1['DIP'] \
+                                    and '100.64.4.' not in mac_on_dev1['DIP'] \
+                                    and '100.64.36.' not in mac_on_dev1['DIP'] \
+                                    and '100.64.132.' not in mac_on_dev1['DIP']:
+                                mactype = 'DIP'
+
                             absent_macs.append([
                                 dev1['hostname'],
                                 mac_on_dev1['vlan_id'],
@@ -169,6 +176,13 @@ def compare_macs(devices, dev_name_1, dev_name_2):
                                     and '36:73:79' not in mac_on_dev1['mac']:
                                 mactype = 'LLDP'
 
+                            if '100.64.68.' not in mac_on_dev1['DIP'] \
+                                    and '100.64.100.' not in mac_on_dev1['DIP'] \
+                                    and '100.64.4.' not in mac_on_dev1['DIP'] \
+                                    and '100.64.36.' not in mac_on_dev1['DIP'] \
+                                    and '100.64.132.' not in mac_on_dev1['DIP']:
+                                mactype = 'DIP'
+
                             absent_macs.append([
                                 dev1['hostname'],
                                 mac_on_dev1['vlan_id'],
@@ -216,6 +230,18 @@ def remove_absent_mac_dups(absent_macs_input):
             absent_macs_output.append(absent_macs_input[i])
     return absent_macs_output
 
+
+
+def remove_dip_lldp_macs(absent_macs_input):
+    absent_macs_output = []
+    dups = []
+
+    for i in range(0, len(absent_macs_input)-1):
+        if absent_macs_input[i][7] == 'LLDP' or absent_macs_input[i][7] == 'DIP':
+            continue
+        else:
+            absent_macs_output.append(absent_macs_input[i])
+    return absent_macs_output
 
 
 def compare_arps(devices, dev_name_1, dev_name_2):
