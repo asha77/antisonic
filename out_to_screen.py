@@ -4,16 +4,15 @@ def tbl_header_out2scr():
           "---------------------------------------------------------------------------------------"
           "--------------------------------------------------------------------------------------"
           "------------------------------------------------------")
-
-
-    print("|  Num |                                   Filename                                  |     "
-          "          Hostname                   |   IP from file  |   IP extracted  |      Domain Name    "
-          " |       Family       |          Model           |         Serial       |        OS        |               SW Version               |"
-          " VTP ver |    VTP Mode      |   VTP Domain     |    VTP rev       |")
     print("--------------------------------------------------------------------------------------------"
           "---------------------------------------------------------------------------------------"
           "--------------------------------------------------------------------------------------"
           "------------------------------------------------------")
+
+
+    print("|  Num |                                   Filename                                  |     "
+          "          Hostname                   |   IP from file  |   IP extracted  |      Domain Name    "
+          " |       Family       |          Model           |         Serial       |        OS        |               SW Version               |")
 
 
 def tbl_footer_out2scr():
@@ -105,7 +104,7 @@ def print_devices_summary(devices):
 
     i = 1
     for dev in devices:
-        print('| {0:4d} | {1:75s} | {2:40s} | {3:15s} | {4:15s} | {5:20s} | {6:18s} | {7:24s} | {8:20s} | {9:16s} | {10:38s} | {11:16s} | {12:16s} | {13:16s} | {14:16s} |'.format(
+        print('| {0:4d} | {1:75s} | {2:40s} | {3:15s} | {4:15s} | {5:20s} | {6:18s} | {7:24s} | {8:20s} | {9:16s} | {10:38s} |'.format(
         i,
         dev['config_filename'],
         dev['hostname'],
@@ -116,11 +115,7 @@ def print_devices_summary(devices):
         dev['model'],
         dev['serial'],
         dev['os'],
-        dev['sw_version'],
-        dev['vtp_version'],
-        dev['vtp_oper_mode'],
-        dev['vtp_domain_name'],
-        dev['vtp_revision'])
+        dev['sw_version'])
         )
         i = i + 1
     # завершаем таблицу

@@ -100,6 +100,13 @@ def main():
                         empty_device['next_hops'] = regparsers.obtain_nexthops(empty_device['vendor_id'], config)
                         empty_device['routes'] = regparsers.obtain_route_num(empty_device['vendor_id'], config)
 
+                        empty_device['evpn_mh_mac_holdtime'] = regparsers.obtain_evpn_mh_holdtime(config)
+                        empty_device['evpn mh neigh-holdtime'] = regparsers.obtain_evpn_mh_holdtime(config)
+                        empty_device['evpn_mh_advertise_unreach_neighbor'] = regparsers.get_evpn_mh_adv_unr_nei(config)
+
+                        empty_device['obj_track_sessions'] = regparsers.get_obj_tracker_sess_num(config)
+                        empty_device['ipv6_link_local'] = regparsers.get_ipv6_link_local_enable(config)
+
                         # get list of cdp neighbours
                         # not yet txtfsmparsers.get_cdp_neighbours_to_model(empty_device, config, curr_path)
                         # get list of ports with many MAC-addresses under them
@@ -173,7 +180,7 @@ def main():
         ############ REPORTING ################
         outintofiles.report_to_file(date, devices, stats)
 
-        outintofiles.fab_stats_to_json(devices, stats)
+        outintofiles.fab_stats_to_json(stats)
         outintofiles.sw_stats_to_json(devices)
 
         # print all neighbours from all devices into 'all_neighbours_output.csv' file

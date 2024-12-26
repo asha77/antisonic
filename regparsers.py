@@ -259,6 +259,7 @@ def obtain_domain(config):
         return "Not set"
 
 
+
 def obtain_software_version(os, config):
     '''
     Extract software version
@@ -948,3 +949,70 @@ def count_all_errors_from_log(vendor_id, log_file):
         if match:
             num_errors = len(match)
     return num_errors
+
+
+def obtain_evpn_mh_holdtime(config):
+    '''
+    Extract evpn mh mac-holdtime 0
+    '''
+    match = re.search("evpn\smh\smac-holdtime\s(\d)", config)
+    if match:
+        return match.group(1).strip()
+    else:
+        return "Not set"
+
+
+def obtain_evpn_mh_neigh_holdtime(config):
+    '''
+    Extract evpn mh neigh-holdtime 0
+    '''
+    match = re.search("evpn\smh\sneigh-holdtime\s(\d)", config)
+    if match:
+        return match.group(1).strip()
+    else:
+        return "Not set"
+
+
+def get_evpn_mh_adv_unr_nei(config):
+    '''
+    Extract evpn mh advertise-unreach-neighbor
+    '''
+
+    match = re.search("evpn\smh\sadvertise-unreach-neighbor", config)
+    if match:
+        return "TRUE"
+    else:
+        return "FALSE"
+
+
+def get_obj_tracker_sess_num(config):
+    '''
+    Extract number of oject tracker sessions from config
+    '''
+
+#    match = re.search("\s+\"Session(\d)\": {", config)
+    match = re.findall("Session(\d)", config)
+
+    if match:
+        return str(match.__len__())
+    else:
+        return "0"
+
+
+
+def get_ipv6_link_local_enable(config):
+    '''
+    Extract number of ipv6_link_local = enable from config
+    '''
+
+#    match = re.search("\s+\"Session(\d)\": {", config)
+    match = re.findall("ipv6_use_link_local_only\":\s\"enable\"", config)
+
+    if match:
+        return str(match.__len__())
+    else:
+        return "0"
+
+
+
+

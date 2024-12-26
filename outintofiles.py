@@ -1157,51 +1157,26 @@ def sw_stats_to_json(devices):
         '{#NEXTHOPS}': dev['next_hops']
     })
 
-    with open(os.path.join("output", "msk_switches_inventory.json"), "w", encoding='utf-8') as f:
+    with open(os.path.join("output", "switches_inventory.json"), "w", encoding='utf-8') as f:
         f.write(json.dumps(sw_stats, ensure_ascii=False, indent=4))
 
 
-def fab_stats_to_json(devices, stats):
+def fab_stats_to_json(stats):
     fab_stats = {}
     fab_stats['data'] = []
 
-    fab_stats['data'].append({
-        '{#SW_PAIR}': 'MSK_SW01-SW02',
-        '{#SAME_STATED_MACS}': stats[0]['same_macs'],
-        '{#ABSENT_MACS}': stats[0]['absent_macs'],
-        '{#ABSENT_ARPS}': stats[0]['absent_arps'],
-        '{#INCOMPLETE_ARPS}': stats[0]['incompleted_arps'],
-        '{#INCONSISTANT_ROUTES}': '0'
-    })
+    for stat in stats:
+        fab_stats['data'].append({
 
-    fab_stats['data'].append({
-        '{#SW_PAIR}': 'MSK_SW03-SW04',
-        '{#SAME_STATED_MACS}': stats[1]['same_macs'],
-        '{#ABSENT_MACS}': stats[1]['absent_macs'],
-        '{#ABSENT_ARPS}': stats[1]['absent_arps'],
-        '{#INCOMPLETE_ARPS}': stats[1]['incompleted_arps'],
+        '{#SW_PAIR}': stat['mh_pair'],
+        '{#SAME_STATED_MACS}': stat['same_macs'],
+        '{#ABSENT_MACS}': stat['absent_macs'],
+        '{#ABSENT_ARPS}': stat['absent_arps'],
+        '{#INCOMPLETE_ARPS}': stat['incompleted_arps'],
         '{#INCONSISTANT_ROUTES}': '0'
-    })
+        })
 
-    fab_stats['data'].append({
-        '{#SW_PAIR}': 'MSK_SW05-SW06',
-        '{#SAME_STATED_MACS}': stats[2]['same_macs'],
-        '{#ABSENT_MACS}': stats[2]['absent_macs'],
-        '{#ABSENT_ARPS}': stats[2]['absent_arps'],
-        '{#INCOMPLETE_ARPS}': stats[2]['incompleted_arps'],
-        '{#INCONSISTANT_ROUTES}': '0'
-    })
-
-    fab_stats['data'].append({
-        '{#SW_PAIR}': 'MSK_BR01-BR02',
-        '{#SAME_STATED_MACS}': stats[3]['same_macs'],
-        '{#ABSENT_MACS}': stats[3]['absent_macs'],
-        '{#ABSENT_ARPS}': stats[3]['absent_arps'],
-        '{#INCOMPLETE_ARPS}': stats[3]['incompleted_arps'],
-        '{#INCONSISTANT_ROUTES}': '0'
-    })
-
-    with open(os.path.join("output", "msk_switches_analytics.json"), "w", encoding='utf-8') as f:
+    with open(os.path.join("output", "switches_analytics.json"), "w", encoding='utf-8') as f:
         f.write(json.dumps(fab_stats, ensure_ascii=False, indent=4))
 
 
@@ -1218,7 +1193,7 @@ def report_to_file(date, devices, stats):
                           '----------------------------------------------------------------------------------------\n')
 
     f_fabric_report.write(
-        '| {0:4s} | {1:30s} | {2:20s} | {3:24s} | {4:20s} | {5:45s} | {6:10s} | {7:10s} | {8:12s} | {9:10s} | {10:10s} | {11:10s} |\n'.format(
+        '| {0:4s} | {1:30s} | {2:20s} | {3:24s} | {4:20s} | {5:45s} | {6:10s} | {7:10s} | {8:12s} | {9:10s} | {10:10s} | {11:10s} | {12:10s} | {13:10s} | {14:10s} | {15:10s} | {16:10s} |\n'.format(
             'Num',
             'hostname',
             'ip address',
@@ -1230,14 +1205,19 @@ def report_to_file(date, devices, stats):
             'ecmp groups',
             'next hops',
             'hosts',
-            'routes'
+            'routes',
+            'ev_mac_hold',
+            'ev_nei_hold',
+            'ev_adv_unr',
+            'obj-tracks',
+            'ipv6_ll'
         ))
 
     f_fabric_report.write('------------------------------------------------------------------------------'
                           '------------------------------------------------------------------------'
                           '----------------------------------------------------------------------------------------\n')
     for dev in devices:
-        f_fabric_report.write('| {0:4d} | {1:30s} | {2:20s} | {3:24s} | {4:20s} | {5:45s} | {6:10s} | {7:10s} | {8:12s} | {9:10s} | {10:10s} | {11:10s} |\n'.format(
+        f_fabric_report.write('| {0:4d} | {1:30s} | {2:20s} | {3:24s} | {4:20s} | {5:45s} | {6:10s} | {7:10s} | {8:12s} | {9:10s} | {10:10s} | {11:10s} | {12:10s} | {13:10s} | {14:10s} | {15:10s} | {16:10s} |\n'.format(
             ind,
             dev['hostname'],
             dev['mgmt_ipv4_from_filename'],
@@ -1249,7 +1229,12 @@ def report_to_file(date, devices, stats):
             dev['ecmp_groups'],
             dev['next_hops'],
             dev['hosts'],
-            dev['routes']
+            dev['routes'],
+            dev['evpn_mh_mac_holdtime'],
+            dev['evpn mh neigh-holdtime'],
+            dev['evpn_mh_advertise_unreach_neighbor'],
+            dev['obj_track_sessions'],
+            dev['ipv6_link_local']
         ))
         ind = ind + 1
 

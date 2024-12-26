@@ -50,7 +50,12 @@ config_entity = {
     'ecmp_groups': '',                              # actual number of ECMP Groups
     'hosts': '',                                    # actual number of HOSTS
     'next_hops': '',                                # actual number of NEXT HOPS
-    'routes': ''                                    # actual number of routes
+    'routes': '',                                   # actual number of routes
+    'evpn_mh_mac_holdtime': '',                     # evpn_mh_mac_holdtime, seconds
+    'evpn mh neigh-holdtime': '',                   # evpn_mh_neigh_holdtime, seconds
+    'evpn_mh_advertise_unreach_neighbor': '',       # evpn_mh_advertise_unreach_neighbor true or false
+    'obj_track_sessions': '',                       # evpn_mh_advertise_unreach_neighbor true or false
+    'ipv6_link_local': ''                           # evpn_mh_advertise_unreach_neighbor true or false
 }
 
 
