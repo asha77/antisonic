@@ -984,12 +984,16 @@ def get_macs_to_model(empty_device, config, curr_path):
 
 
 def get_arps_to_model(empty_device, config, curr_path):
+    # parsing sudo arp -n output
+
     if empty_device['os'] == 'sonic_edgecore':
         arp_template = open(os.path.join(curr_path, "txtfsm_templates", "edgecore", "edgecore_arp.template"))
         fsm = textfsm.TextFSM(arp_template)
         fsm.Reset()
         arp_parsed = fsm.ParseText(config)
 
+        # if (incomplete) "arp -n" output - arp[2] =='' and we set mac as incomplete
+        # TODO: possible to get incomplete from txtfsmparser
         for arp in arp_parsed:
             if arp[2] == '':
                 mac = "incomplete"

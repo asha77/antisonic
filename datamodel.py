@@ -1,3 +1,12 @@
+import enum
+
+class mac_types(enum.Enum):
+    edgecore = 0
+    lldp = 1
+    dip = 2
+    other = 3
+
+
 config_entity = {
     'config_filename': '',                          # conf_file.cfg
     'hostname': '',                                 # ciscodevice-1.device

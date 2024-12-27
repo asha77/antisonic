@@ -1044,7 +1044,7 @@ def same_stated_macs_to_file(same_stated_macs, file_suffix):
 def absent_macs_to_file(absent_macs, file_suffix):
     f_abs_macs = open(os.path.join("output", "absent_macs" + file_suffix + ".csv"), "w")
     for mac in absent_macs:
-        f_abs_macs.write('{0:1s};{1:1s};{2:1s};{3:1s};{4:1s};{5:1s};{6:1s}\n'.format(
+        f_abs_macs.write('{0:1s};{1:1s};{2:1s};{3:1s};{4:1s};{5:1s};{6:1s};{7:1s}\n'.format(
             mac[0],
             mac[1],
             mac[2],

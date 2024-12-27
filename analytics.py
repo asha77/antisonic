@@ -1,3 +1,5 @@
+from datamodel import mac_types
+
 
 def compare_macs(devices, dev_name_1, dev_name_2):
     same_stated_macs = []
@@ -64,27 +66,33 @@ def compare_macs(devices, dev_name_1, dev_name_2):
                             # '52:7C:6F' Intel LLDP
                             # '36:73:79' xFusion LLDP
                             # 'E0:01:A6' Edgecore
+#                            mactype = 'other'
+                            mactype = mac_types.other
 
-                            mactype = 'other'
+                            if '14:44:8F' in mac_on_dev1['mac'] \
+                                    or 'D0:77:CE' in mac_on_dev1['mac'] \
+                                    or 'E4:9D:73' in mac_on_dev1['mac'] \
+                                    or 'E0:01:A6' in mac_on_dev1['mac'] \
+                                    or 'A8:27:C8' in mac_on_dev1['mac'][0:8]:
+                                mactype = mac_types.edgecore
+                            #                                mactype = 'Edgecore'
 
-                            if '14:44:8F' not in mac_on_dev1['mac'] \
-                                    and 'D0:77:CE' not in mac_on_dev1['mac'] \
-                                    and 'E4:9D:73' not in mac_on_dev1['mac'] \
-                                    and 'E0:01:A6' not in mac_on_dev1['mac']:
-                                mactype = 'Edgecore'
 
                             if 'B6:96:91' not in mac_on_dev1['mac'] \
                                     and '32:3E:A7' not in mac_on_dev1['mac'] \
                                     and '52:7C:6F' not in mac_on_dev1['mac'] \
                                     and '36:73:79' not in mac_on_dev1['mac']:
-                                mactype = 'LLDP'
+                                mactype = mac_types.lldp
+#                                mactype = 'LLDP'
 
                             if '100.64.68.' not in mac_on_dev1['DIP'] \
                                     and '100.64.100.' not in mac_on_dev1['DIP'] \
                                     and '100.64.4.' not in mac_on_dev1['DIP'] \
                                     and '100.64.36.' not in mac_on_dev1['DIP'] \
                                     and '100.64.132.' not in mac_on_dev1['DIP']:
-                                mactype = 'DIP'
+                                mactype = mac_types.dip
+#                                mactype = 'DIP'
+
 
                             absent_macs.append([
                                 dev1['hostname'],
@@ -155,33 +163,39 @@ def compare_macs(devices, dev_name_1, dev_name_2):
                             # filter Edgecore MACS and LLD handmade MACs
                             # '14:44:8F' Edgecore
                             # 'D0:77:CE' Edgecore
+                            # 'A8:27:C8' Edgecore
                             # 'B6:96:91' Intel LLDP
                             # 'E4:9D:73' Edgecore
                             # '32:3E:A7' Intel LLDP
                             # '52:7C:6F' Intel LLDP
                             # '36:73:79' xFusion LLDP
                             # 'E0:01:A6' Edgecore
+                            mactype = mac_types.other
+#                            mactype = 'other'
 
-                            mactype = 'other'
+                            if '14:44:8F' in mac_on_dev1['mac'][0:8] \
+                                    or 'D0:77:CE' in mac_on_dev1['mac'][0:8] \
+                                    or 'E4:9D:73' in mac_on_dev1['mac'][0:8] \
+                                    or 'E0:01:A6' in mac_on_dev1['mac'][0:8] \
+                                    or 'A8:27:C8' in mac_on_dev1['mac'][0:8]:
+                                mactype = mac_types.edgecore
+                            #                                mactype = 'edgecore'
 
-                            if '14:44:8F' not in mac_on_dev1['mac'] \
-                                    and 'D0:77:CE' not in mac_on_dev1['mac'] \
-                                    and 'E4:9D:73' not in mac_on_dev1['mac'] \
-                                    and 'E0:01:A6' not in mac_on_dev1['mac']:
-                                mactype = 'Edgecore'
-
-                            if 'B6:96:91' not in mac_on_dev1['mac'] \
-                                    and '32:3E:A7' not in mac_on_dev1['mac'] \
-                                    and '52:7C:6F' not in mac_on_dev1['mac'] \
-                                    and '36:73:79' not in mac_on_dev1['mac']:
-                                mactype = 'LLDP'
+                            if 'B6:96:91' in mac_on_dev1['mac'][0:8] \
+                                    or '32:3E:A7' in mac_on_dev1['mac'][0:8] \
+                                    or '52:7C:6F' in mac_on_dev1['mac'][0:8] \
+                                    or '36:73:79' in mac_on_dev1['mac'][0:8]:
+                                mactype = mac_types.lldp
+#                                mactype = 'LLDP'
 
                             if '100.64.68.' not in mac_on_dev1['DIP'] \
-                                    and '100.64.100.' not in mac_on_dev1['DIP'] \
-                                    and '100.64.4.' not in mac_on_dev1['DIP'] \
-                                    and '100.64.36.' not in mac_on_dev1['DIP'] \
-                                    and '100.64.132.' not in mac_on_dev1['DIP']:
-                                mactype = 'DIP'
+                                    or '100.64.100.' in mac_on_dev1['DIP'] \
+                                    or '100.64.4.' in mac_on_dev1['DIP'] \
+                                    or '100.64.36.' in mac_on_dev1['DIP'] \
+                                    or '100.64.132.' in mac_on_dev1['DIP']:
+                                mactype = mac_types.dip
+#                                mactype = 'DIP'
+
 
                             absent_macs.append([
                                 dev1['hostname'],
@@ -237,7 +251,7 @@ def remove_dip_lldp_macs(absent_macs_input):
     dups = []
 
     for i in range(0, len(absent_macs_input)-1):
-        if absent_macs_input[i][7] == 'LLDP' or absent_macs_input[i][7] == 'DIP':
+        if absent_macs_input[i][7] == mac_types.lldp or absent_macs_input[i][7] == mac_types.dip:
             continue
         else:
             absent_macs_output.append(absent_macs_input[i])
