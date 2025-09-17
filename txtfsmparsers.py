@@ -218,6 +218,33 @@ def get_cdp_neighbours_to_model(empty_device, config, curr_path):
                           }
             empty_device['cdp_neighbours'].append(cdp_record)
 
+    if empty_device['os'] == 'sonic_edgecore':
+        nei_template = open(os.path.join(curr_path, "txtfsm_templates", "edgecore", "edgecore_lldp_nei.template"))
+
+        fsm = textfsm.TextFSM(nei_template)
+        fsm.Reset()
+        neighbours = fsm.ParseText(config)
+        nei_template.close()
+
+        lastindex = 0
+
+        if empty_device['domain_name'] == "Not set":
+            dev_id = empty_device['hostname']
+        else:
+            dev_id = empty_device['hostname'] + '.' + empty_device['domain_name']
+
+        for neib in neighbours:
+            cdp_record = {'local_id': dev_id,
+                        'local_model': empty_device['model'],
+                        'local_ip_addr': empty_device['mgmt_ipv4_from_filename'],
+                        'local_interface': neib[0],
+                        'remote_id': neib[1],
+                        'remote_model': "",
+                        'remote_ip_addr': "",
+                        'remote_interface': neib[4]
+                        }
+            empty_device['cdp_neighbours'].append(cdp_record)
+
     return empty_device
 
 
@@ -1133,3 +1160,29 @@ def verbose_status(sign):
                                             return 'Removed'
                                         else:
                                             return sign
+
+
+def get_ip_bgp_summ_model(empty_device, config, curr_path):
+    if empty_device['os'] == 'sonic_edgecore':
+        bgp_sum_template = open(os.path.join(curr_path, "txtfsm_templates", "edgecore", "edgecore_bgp_summ.template"))
+        fsm = textfsm.TextFSM(bgp_sum_template)
+        fsm.Reset()
+        bgp_sum_parsed = fsm.ParseText(config)
+
+        for bgp_state in bgp_sum_parsed:
+            empty_device['bgp_sessions'].append({
+                'interface': bgp_state[0],
+                'version': bgp_state[1],
+                'as': bgp_state[2],
+                'msgrcvd': bgp_state[3],
+                'msgsent': bgp_state[4],
+                'tblver': bgp_state[5],
+                'inq': bgp_state[6],
+                'outq': bgp_state[7],
+                'updown': bgp_state[8],
+                'statepfxrcd': bgp_state[9],
+                'statepfxsnt': bgp_state[10],
+                'desc': bgp_state[11]
+            })
+
+    return empty_device

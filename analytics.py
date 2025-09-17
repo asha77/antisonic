@@ -559,3 +559,26 @@ def get_all_routes(devices):
             return all_routes
 
     return all_routes
+
+
+def analyse_bgp_states(bgp_sessions):
+#    for session in bgp_sessions:
+    bgp_sess_state = 'Ok'
+
+    return bgp_sess_state
+
+
+def analyse_frr_logging(frr_logging):
+    frr_set = set()
+    for frr_log in frr_logging:
+        frr_set.add(frr_log['loglevel'])
+    return frr_set
+
+
+def analyse_process_logging(processes_logging):
+    proc_set = set()
+    for proc_log in processes_logging:
+        proc_set.add(proc_log['loglevel'])
+    return proc_set
+
+

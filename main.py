@@ -1,4 +1,5 @@
 import argparse
+import diagrams
 import out_to_screen
 import outintofiles
 import check_duplicates
@@ -83,14 +84,11 @@ def main():
                         regparsers.fill_devinfo_to_model_from_config(empty_device, config, file)   # add to model
 
                         txtfsmparsers.get_esi_to_model(empty_device, config, curr_path)
-
                         txtfsmparsers.get_macs_to_model(empty_device, config, curr_path)
-
                         txtfsmparsers.get_arps_to_model(empty_device, config, curr_path)
-
                         txtfsmparsers.get_ip_nei_to_model(empty_device, config, curr_path)
-
                         txtfsmparsers.get_bgp_routes_to_model(empty_device, config, curr_path)
+                        txtfsmparsers.get_ip_bgp_summ_model(empty_device, config, curr_path)
 
                         empty_device['errors'], empty_device['known_errors'] = regparsers.check_error_log(empty_device['vendor_id'], config)
                         empty_device['all_errors'] = str(regparsers.count_all_errors_from_log(empty_device['vendor_id'], config))
@@ -107,8 +105,11 @@ def main():
                         empty_device['obj_track_sessions'] = regparsers.get_obj_tracker_sess_num(config)
                         empty_device['ipv6_link_local'] = regparsers.get_ipv6_link_local_enable(config)
 
+                        empty_device['processes_logging'] = regparsers.get_processes_logging(config)
+                        empty_device['frr_logging'] = regparsers.get_frr_logging(config)
+
                         # get list of cdp neighbours
-                        # not yet txtfsmparsers.get_cdp_neighbours_to_model(empty_device, config, curr_path)
+                        txtfsmparsers.get_cdp_neighbours_to_model(empty_device, config, curr_path)
                         # get list of ports with many MAC-addresses under them
                         # outintofiles.many_macs_file_output(config, curr_path, cdp_neighbours, devinfo)  # optional - to rework
                         # get interfaces configuration
@@ -136,6 +137,7 @@ def main():
         # print ip neighbours to file all_ip_neighbours.csv
         outintofiles.ip_neigh_to_file(devices)
 
+
         for mpair in multihoming_pairs:
             same_stated_macs, absent_macs = analytics.compare_macs(devices, mpair[1], mpair[2])
             incompleted_arps, absent_arps = analytics.compare_arps(devices, mpair[1], mpair[2])
@@ -152,7 +154,6 @@ def main():
             # filter absent MACs from final report - remove DIP and LLDP MACs
             absent_macs = analytics.remove_dip_lldp_macs(absent_macs)
 
-
             mh_pairs_stats = {
                 'mh_pair': mpair[3][1:],
                 'same_macs': len(same_stated_macs),
@@ -166,20 +167,11 @@ def main():
             }
             stats.append(mh_pairs_stats)
 
-#        stats['swl01_swl02'].append('same_macs') = len(same_stated_macs)
-#        stats['swl01_swl02'].append('absent_macs') = len(absent_macs)
-#        stats['swl01_swl02'].append('incompleted_arps') = len(incompleted_arps)
-#        stats['swl01_swl02'].append('absent_arps') = len(absent_arps)
-    # todo:  make correct saving results here
-            # m1dyn_m2stat_a1reach_a2stale, m1dyn_m2stat_a1stale_a2reach, m1stat_m2dyn_a1reach_a2stale, m1stat_m2dyn_a1stale_a2reach, m1dyn_m2stat_a1reach_a2reach, m1stat_m2dyn_a1reach_a2reach, stat_m2stat_a1stale_a2stale, record_not_found = analytics.check_mac_arps(devices, mpair[1], mpair[2])
-            # outintofiles.macarpstates_to_file(date, devices, m1dyn_m2stat_a1reach_a2stale, m1dyn_m2stat_a1stale_a2reach, m1stat_m2dyn_a1reach_a2stale, m1stat_m2dyn_a1stale_a2reach, m1dyn_m2stat_a1reach_a2reach, m1stat_m2dyn_a1reach_a2reach, stat_m2stat_a1stale_a2stale, record_not_found)
-
         ############ ROUTING ANALYTICS ################
         # allfabric_routes = analytics.get_all_routes(devices)
 
         ############ REPORTING ################
         outintofiles.report_to_file(date, devices, stats)
-
         outintofiles.fab_stats_to_json(stats)
         outintofiles.sw_stats_to_json(devices)
 
@@ -200,6 +192,9 @@ def main():
         #                  'See file \"missed.devices.csv\"'.format(len(missed_devices)))
         # analysis of required VLAN on trunk ports
         #        trunking_analisys()
+
+        ############ CREATING DIAGRAM ################
+        diagrams.create_diagram(devices)
 
         print("Finished processing files in folder: " + str(namespace.configdir) + '\n')
 

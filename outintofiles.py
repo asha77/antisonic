@@ -1,5 +1,5 @@
 import os
-import txtfsmparsers
+import txtfsmparsers, analytics
 from datetime import datetime
 import regparsers
 import json
@@ -1193,7 +1193,7 @@ def report_to_file(date, devices, stats):
                           '----------------------------------------------------------------------------------------\n')
 
     f_fabric_report.write(
-        '| {0:4s} | {1:30s} | {2:20s} | {3:24s} | {4:20s} | {5:45s} | {6:10s} | {7:10s} | {8:12s} | {9:10s} | {10:10s} | {11:10s} | {12:10s} | {13:10s} | {14:10s} | {15:10s} | {16:10s} |\n'.format(
+        '| {0:4s} | {1:30s} | {2:20s} | {3:24s} | {4:20s} | {5:45s} | {6:10s} | {7:10s} | {8:12s} | {9:10s} | {10:10s} | {11:10s} | \n'.format(
             'Num',
             'hostname',
             'ip address',
@@ -1205,19 +1205,19 @@ def report_to_file(date, devices, stats):
             'ecmp groups',
             'next hops',
             'hosts',
-            'routes',
-            'ev_mac_hold',
-            'ev_nei_hold',
-            'ev_adv_unr',
-            'obj-tracks',
-            'ipv6_ll'
+            'routes'
         ))
 
     f_fabric_report.write('------------------------------------------------------------------------------'
                           '------------------------------------------------------------------------'
                           '----------------------------------------------------------------------------------------\n')
     for dev in devices:
-        f_fabric_report.write('| {0:4d} | {1:30s} | {2:20s} | {3:24s} | {4:20s} | {5:45s} | {6:10s} | {7:10s} | {8:12s} | {9:10s} | {10:10s} | {11:10s} | {12:10s} | {13:10s} | {14:10s} | {15:10s} | {16:10s} |\n'.format(
+
+        bgp_status = analytics.analyse_bgp_states(dev['bgp_sessions'])
+        frr_log_status = analytics.analyse_frr_logging(dev['frr_logging'])
+        process_log_status = analytics.analyse_process_logging(dev['processes_logging'])
+
+        f_fabric_report.write('| {0:4d} | {1:30s} | {2:20s} | {3:24s} | {4:20s} | {5:45s} | {6:10s} | {7:10s} | {8:12s} | {9:10s} | {10:10s} | {11:10s} |\n'.format(
             ind,
             dev['hostname'],
             dev['mgmt_ipv4_from_filename'],
@@ -1229,12 +1229,7 @@ def report_to_file(date, devices, stats):
             dev['ecmp_groups'],
             dev['next_hops'],
             dev['hosts'],
-            dev['routes'],
-            dev['evpn_mh_mac_holdtime'],
-            dev['evpn mh neigh-holdtime'],
-            dev['evpn_mh_advertise_unreach_neighbor'],
-            dev['obj_track_sessions'],
-            dev['ipv6_link_local']
+            dev['routes']
         ))
         ind = ind + 1
 
@@ -1414,6 +1409,56 @@ def report_to_file(date, devices, stats):
                     amac[7]
                 ))
 
+    f_fabric_report.write('\n\n')
+    f_fabric_report.write('------------------------------------------------------------------------------'
+                          '------------------------------------------------------------------------'
+                          '------------------------------------------------------------------------\n')
+
+    f_fabric_report.write(
+        '| {0:4s} | {1:30s} | {2:15s} | {3:12s} | {4:12s} | {5:10s} | {6:10s} | {7:10s} | {8:12s} | {9:20s} | {10:20s} |\n'.format(
+            'Num',
+            'hostname',
+            'ip address',
+            'ev_mac_hold',
+            'ev_nei_hold',
+            'ev_adv_unr',
+            'obj-tracks',
+            'ipv6_ll',
+            'bgp_status',
+            'frr_logging',
+            'process_logging'
+        ))
+
+    f_fabric_report.write('------------------------------------------------------------------------------'
+                          '------------------------------------------------------------------------'
+                          '------------------------------------------------------------------------\n')
+    ind = 1
+    for dev in devices:
+
+        bgp_status = analytics.analyse_bgp_states(dev['bgp_sessions'])
+        frr_log_status = analytics.analyse_frr_logging(dev['frr_logging'])
+        process_log_status = analytics.analyse_process_logging(dev['processes_logging'])
+
+        f_fabric_report.write('| {0:4d} | {1:30s} | {2:15s} | {3:12s} | {4:12s} | {5:10s} | {6:10s} | {7:10s} |  {8:10s} |  {9:20s} |  {10:20s} |\n'.format(
+            ind,
+            dev['hostname'],
+            dev['mgmt_ipv4_from_filename'],
+            dev['evpn_mh_mac_holdtime'],
+            dev['evpn mh neigh-holdtime'],
+            dev['evpn_mh_advertise_unreach_neighbor'],
+            dev['obj_track_sessions'],
+            dev['ipv6_link_local'],
+            bgp_status,
+            str(frr_log_status),
+            str(process_log_status)
+        ))
+        ind = ind + 1
+
+    f_fabric_report.write('------------------------------------------------------------------------------'
+                          '------------------------------------------------------------------------'
+                          '------------------------------------------------------------------------\n')
+
+    f_fabric_report.write('\n\n')
     f_fabric_report.close()
 
 

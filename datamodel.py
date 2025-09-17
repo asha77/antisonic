@@ -44,6 +44,7 @@ config_entity = {
     'arp_table': [],                                # {'address': '192.168.0.1', 'mac': 'aa:aa:aa:aa:aa:aa', 'interface': 'static'}
     'esi_table': [],                                # {'esi': '03:aa:1c:73:00:01:01:00:00:65', 'type': 'R', 'port': 'PortChannel1', 'status': 'up', 'vteps': '192.168.1'}
     'ip_nei_table': [],                             # {'ip': '03:aa:1c:73:00:01', 'dev': 'Sag122', 'lladdr': '52:54:00:c7:17:ee', 'learned': 'extern_learn', 'used': 'used 67827/67827/67827', 'probes': '0', 'status': 'NOARP', 'proto': 'zebra'}
+    'bgp_sessions': [],                             #
     'cdp_neighbours': [],                           # {'device_id': 'asw-1.ru', 'ip_addr': '192.168.1', 'model': 'cisco 9200L-24T-4G', 'local_interface': 'GigabitEthernet0/0/0', 'remote_interface': 'GigabitEthernet0/0/0'}
     'logging_host': [],                             # '10.66.228.33', '10.10.248.70'
     'tacacs_servers': [],                           # '10.66.228.33', '10.66.228.33'
@@ -64,7 +65,9 @@ config_entity = {
     'evpn mh neigh-holdtime': '',                   # evpn_mh_neigh_holdtime, seconds
     'evpn_mh_advertise_unreach_neighbor': '',       # evpn_mh_advertise_unreach_neighbor true or false
     'obj_track_sessions': '',                       # evpn_mh_advertise_unreach_neighbor true or false
-    'ipv6_link_local': ''                           # evpn_mh_advertise_unreach_neighbor true or false
+    'ipv6_link_local': '',                          # evpn_mh_advertise_unreach_neighbor true or false
+    'processes_logging': [],
+    'frr_logging': []
 }
 
 
@@ -123,6 +126,26 @@ arp_record = {
     'type': ''
     }
 
+bgp_sessions = {
+    'interface': '',
+    'version': '',
+    'as': '',
+    'msgrcvd': '',
+    'msgsent': '',
+    'tblver': '',
+    'inq': '',
+    'outq': '',
+    'updown': '',
+    'statepfxrcd': '',
+    'statepfxsnt': '',
+    'desc': ''
+    }
+
+container_logging = {
+    'process': '',
+    'loglevel': ''
+    }
+
 
 edgecore_log_errors = [
     'ERR\ssystemd\S*:\sFailed\sto\sstart\s\S*\scontainer.',
@@ -154,3 +177,85 @@ edgecore_log_errors = [
     'DEBUG\skernel:\s\[\S+\]\sEDAC\ssbridge\sMC\d:\sHANDLING\sMCE\sMEMORY\sERROR',
     'WARNING\skernel:\s\[\S+\]\sEDAC\sMC\d:\s\d+\sCE\smemory\sread\serror'
 ]
+
+
+log_entities = ['JINJA2_CACHE',
+            'SAI_API_ACL',
+            'SAI_API_BFD',
+            'SAI_API_BMTOR',
+            'SAI_API_BRIDGE',
+            'SAI_API_BUFFER',
+            'SAI_API_COUNTER',
+            'SAI_API_DEBUG_COUNTER',
+            'SAI_API_DTEL',
+            'SAI_API_FDB',
+            'SAI_API_HASH',
+            'SAI_API_HOSTIF',
+            'SAI_API_IPMC',
+            'SAI_API_IPMC_GROUP',
+            'SAI_API_IPSEC',
+            'SAI_API_ISOLATION_GROUP',
+            'SAI_API_L2MC',
+            'SAI_API_L2MC_GROUP',
+            'SAI_API_LAG',
+            'SAI_API_MACSEC',
+            'SAI_API_MCAST_FDB',
+            'SAI_API_MIRROR',
+            'SAI_API_MPLS',
+            'SAI_API_MY_MAC',
+            'SAI_API_NAT',
+            'SAI_API_NEIGHBOR',
+            'SAI_API_NEXT_HOP',
+            'SAI_API_NEXT_HOP_GROUP',
+            'SAI_API_POLICER',
+            'SAI_API_PORT',
+            'SAI_API_QOS_MAP',
+            'SAI_API_QUEUE',
+            'SAI_API_ROUTE',
+            'SAI_LOG_LEVEL_NOTICE',
+            'SAI_API_RPF_GROUP',
+            'SAI_API_RPF_GROUP',
+            'SAI_API_SAMPLEPACKET',
+            'SAI_API_SCHEDULER',
+            'SAI_API_SCHEDULER_GROUP',
+            'SAI_API_SRV6',
+            'SAI_API_STP',
+            'SAI_API_SWITCH',
+            'SAI_API_SYSTEM_PORT',
+            'SAI_API_TAM',
+            'SAI_API_TUNNEL',
+            'SAI_API_UDF',
+            'SAI_API_VIRTUAL_ROUTER',
+            'SAI_API_VLAN',
+            'SAI_API_WRED',
+            'buffermgrd',
+            'coppmgrd',
+            'daimgrd',
+            'dot1xmgrd',
+            'esmgrd',
+            'essyncd',
+            'fdbsyncd',
+            'fpmsyncd',
+            'gearsyncd',
+            'intfmgrd',
+            'natmgrd',
+            'natsyncd',
+            'nbrmgrd',
+            'neighsyncd',
+            'objtrkmgrd',
+            'orchagent',
+            'portmgrd',
+            'portsyncd',
+            'sagmgrd',
+            'sflowmgrd',
+            'stpmgrd',
+            'syncd',
+            'teammgrd',
+            'teamsyncd',
+            'tlm_teamd',
+            'tunnelmgrd',
+            'vlanmgrd',
+            'vrfmgrd',
+            'vrrpyncd',
+            'vxlanmgrd'
+            ]

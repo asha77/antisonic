@@ -1,0 +1,8 @@
+Value LOCAL_INTERFACE (Ethernet\d+|eth\d+)
+Value NEIGHBOR (TC-\S+|tc-\S+)
+Value NEIGHBOR_INTERFACE_ID (\S+)
+Value CAPABILITIES (\S*)
+Value REMOTE_INTERFACE_DESC (Ethernet\d*|eth\d*|en\S\d*)
+
+Start
+  ^${LOCAL_INTERFACE}\s+${NEIGHBOR}\s+${NEIGHBOR_INTERFACE_ID}\s+${CAPABILITIES}\s+${REMOTE_INTERFACE_DESC} -> Record

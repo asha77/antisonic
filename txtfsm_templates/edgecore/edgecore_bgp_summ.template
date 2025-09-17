@@ -1,0 +1,16 @@
+Value INTERFACE (\S+)
+Value VERSION (\d)
+Value AS (\d+)
+Value MSGRCVD (\d+)
+Value MSGSENT (\d+)
+Value TBLVER (\d)
+Value INQ (\d)
+Value OUTQ (\d)
+Value UPDOWN (\S+)
+Value STATEPFXRCD (\S+)
+Value STATEPFXSNT (\S+)
+Value DESC (\S+)
+
+Start
+  ^Neighbor\s+V\s+AS\s+MsgRcvd\s+MsgSent\s+TblVer\s+InQ\s+OutQ\s+Up/Down\s+State/PfxRcd\s+PfxSnt\s+Desc
+  ^${INTERFACE}\s+${VERSION}\s+${AS}\s+${MSGRCVD}\s+${MSGSENT}\s+${TBLVER}\s+${INQ}\s+${OUTQ}\s+${UPDOWN}\s+${STATEPFXRCD}\s+${STATEPFXSNT}\s+${DESC}$$ -> Record

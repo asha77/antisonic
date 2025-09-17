@@ -1014,5 +1014,37 @@ def get_ipv6_link_local_enable(config):
         return "0"
 
 
+def get_frr_logging(config):
+    '''
+    Extract frr services logging severity from config
+    '''
+    frr_loglevel = []
+    match = re.findall("Syslog\slogging:\slevel\s(\w+),\sfacility\s(\w+),\sident\s(\w+)", config)
+
+    if match:
+        for i in range(len(match)):
+
+            frr_loglevel.append({
+                'process': match[i][2],
+                'loglevel': match[i][0]
+            })
+    return frr_loglevel
 
 
+def get_processes_logging(config):
+    '''
+    Extract containers logging severity from config
+    '''
+    container_logging = []
+
+    for ent in datamodel.log_entities:
+        restring = ent + "\s+(\w+)\n"
+
+        match = re.search(restring, config)
+        if match:
+            container_logging.append({
+                'process': ent,
+                'loglevel': match[1]
+            })
+
+    return container_logging
