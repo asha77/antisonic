@@ -11,7 +11,7 @@ def obtain_hostname(config):
     Extract device hostname
     """
 
-    match = re.search('hostname\s(.*)', config)
+    match = re.search('hostname\s+([\w+\-]*)', config)
     if match:
         return match.group(1).strip().replace('"', '')
     else:
@@ -98,7 +98,7 @@ def obtain_model(vendor_id, config):
     Extract model number
     '''
     if vendor_id == 'cisco':
-        match = re.search("Model \wumber\ *: (.*)", config)
+        match = re.search("Model \wumber\s*: (.*)", config)
         if match:
             return match.group(1).strip()
         else:
@@ -107,7 +107,7 @@ def obtain_model(vendor_id, config):
             if match:
                 return match.group(1).strip()
             else:
-                match = re.search("\ \ cisco Nexus9000 (.*) Chassis", config)
+                match = re.search("\s+cisco Nexus9000 (.*) Chassis", config)
                 if match:
                     return "N9K-"+match.group(1).strip()
                 else:
@@ -139,6 +139,11 @@ def obtain_model(vendor_id, config):
 
     if vendor_id == 'edgecore':
         match = re.search('\s*HwSKU:\s(\S*)', config)
+        if match:
+            return match.group(1).strip()
+
+    if vendor_id == 'rdp':
+        match = re.search('\s*product-name\s(\S*)', config)
         if match:
             return match.group(1).strip()
     return "Not found"
@@ -184,7 +189,7 @@ def obtain_serial(config):
     vendor_id = device_detection.obtain_device_vendor_id(config)
 
     if vendor_id == 'cisco':
-        match = re.search("\wystem \werial \wumber\ *: (.*)", config)
+        match = re.search("\wystem \werial \wumber\s*: (.*)", config)
         if match:
             return match.group(1).strip()
         else:
@@ -244,6 +249,11 @@ def obtain_serial(config):
         if match:
             return match.group(1).strip()
 
+    if vendor_id == 'rdp':
+        match = re.search("serial-number\s(\w*)", config)
+        if match:
+            return match.group(1).strip()
+
     return "Not Found"
 
 
@@ -297,8 +307,12 @@ def obtain_software_version(os, config):
         if match:
             str = match.group(1).strip()
             str = str[15:len(str)]
-
 #            return match.group(1).strip()
+            return str
+    elif os == 'rdp_econpb_os':
+        match = re.search('\s*image-name\s*(\S+)', config)
+        if match:
+            str = match.group(2).strip()
             return str
         else:
             return "Not Found"

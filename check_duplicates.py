@@ -12,7 +12,8 @@ def check_config_duplicates(list_of_files):
     filenum = 0
 
     for file in list_of_files:
-        if os.path.isfile(file):
+        if os.path.isfile(file) and (not file == 'logfile.log'):
+
             with open(file, "r", encoding='utf-8') as conffile:
                 config = conffile.read()
 

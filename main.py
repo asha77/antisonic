@@ -4,6 +4,7 @@ import out_to_screen
 import outintofiles
 import check_duplicates
 import txtfsmparsers
+import device_detection
 import datamodel
 import os
 import pathlib
@@ -78,6 +79,9 @@ def main():
                 if os.path.isfile(file):
                     with open(file, "r", encoding='utf-8') as conffile:
                         config = conffile.read()
+                        if device_detection.obtain_device_vendor_id(config) != 'edgecore':
+                            continue
+
                         empty_device = copy.deepcopy(datamodel.config_entity)
 
                         # get basic parameters

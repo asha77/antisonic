@@ -7,7 +7,8 @@ vendor_id_vendor = {
     'hpe_aruba': 'Hewlett-Packard Enterprise (Aruba)',
     'hpe_comware': 'Hewlett-Packard Enterprise (Comware)',
     'arista': 'Arista Networks',
-    'edgecore': 'Edge-core Networks'
+    'edgecore': 'Edge-core Networks',
+    'rdp': 'RDP.RU'
 }
 
 
@@ -97,6 +98,18 @@ def obtain_device_vendor_id(config):
     if match:
         return 'edgecore'
 
+    match = re.search("\s*FlowBalancer\s*(\S+)", config)
+    if match:
+        return 'rdp'
+
+    match = re.search("\s*SDNSwitch-packet-broker\s*(\S+)", config)
+    if match:
+        return 'rdp'
+
+    match = re.search("\s*EcoNPB\s*(\S+)", config)
+    if match:
+        return 'rdp'
+
     return "Not Found"
 
 
@@ -161,6 +174,12 @@ def obtain_device_family(vendor, config):
         if match:
             return 'edgecore_broadcom'
 
+    if vendor == 'rdp':
+        match = re.search('\s*EcoNPB\s*(\S+)', config)
+        if match:
+            return 'rdp_econpb'
+        else:
+            return 'rdp_econpb' # no idea about other rdp devices...
     return "Not Found"
 
 
@@ -209,6 +228,8 @@ def obtain_device_os(vendor_id, config):
         if match:
             return 'sonic_edgecore'
 
+    if vendor_id == 'rdp':
+        return 'rdp_econpb_os'
     return "Not Found"
 
 
