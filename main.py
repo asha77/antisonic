@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import diagrams
 import out_to_screen
