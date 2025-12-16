@@ -143,7 +143,6 @@ def main():
         # print ip neighbours to file all_ip_neighbours.csv
         outintofiles.ip_neigh_to_file(devices)
 
-
         for mpair in multihoming_pairs:
             same_stated_macs, absent_macs = analytics.compare_macs(devices, mpair[1], mpair[2])
             incompleted_arps, absent_arps = analytics.compare_arps(devices, mpair[1], mpair[2])
