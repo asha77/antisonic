@@ -1013,7 +1013,7 @@ def get_obj_tracker_sess_num(config):
         return "0"
 
 
-
+# TODO: изменить или сделать отдельную процедуру для парсинга команды show ipv6 link-local-mode | grep -i "Vlan" | grep -i Disable | wc -l Expected result: 0
 def get_ipv6_link_local_enable(config):
     '''
     Extract number of ipv6_link_local = enable from config

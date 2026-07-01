@@ -39,7 +39,7 @@ def get_cdp_neighbours_to_model(empty_device, config, curr_path):
                             }
                 empty_device['cdp_neighbours'].append(cdp_record)
         else:
-            # let's try lldp neighbours while cdp neighbours not found
+            # let's try cisco lldp neighbours while cdp neighbours not found
             nei_template = open(os.path.join(curr_path, "txtfsm_templates", "cisco", "cisco_lldp_nei_detail.template"))
 
             fsm = textfsm.TextFSM(nei_template)
@@ -234,11 +234,16 @@ def get_cdp_neighbours_to_model(empty_device, config, curr_path):
             dev_id = empty_device['hostname'] + '.' + empty_device['domain_name']
 
         for neib in neighbours:
+            if neib[1] == '':
+                rem_id = neib[5]
+            else:
+                rem_id = neib[1]
+
             cdp_record = {'local_id': dev_id,
                         'local_model': empty_device['model'],
                         'local_ip_addr': empty_device['mgmt_ipv4_from_filename'],
                         'local_interface': neib[0],
-                        'remote_id': neib[1],
+                        'remote_id': rem_id,
                         'remote_model': "",
                         'remote_ip_addr': "",
                         'remote_interface': neib[4]

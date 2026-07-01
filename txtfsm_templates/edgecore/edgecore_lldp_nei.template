@@ -1,8 +1,13 @@
 Value LOCAL_INTERFACE (Ethernet\d+|eth\d+)
-Value NEIGHBOR (TC-\S+|tc-\S+)
-Value NEIGHBOR_INTERFACE_ID (\S+)
+Value NEIGHBOR ([a-zA-Z0-9.-]+)
+Value NEIGHBOR_INTERFACE_ID ([a-zA-Z0-9\/()]+)
 Value CAPABILITIES (\S*)
-Value REMOTE_INTERFACE_DESC (Ethernet\d*|eth\d*|en\S\d*)
+#Value REMOTE_INTERFACE_DESC (TenGigabitEthernet[\/\d]+|Ethernet[\d]+|eth[\/\d]+|en\S[\/\d]+)
+Value REMOTE_INTERFACE_DESC ([a-zA-Z0-9:.-]+)
+Value REMOTE_MAC (([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2}))
+
 
 Start
   ^${LOCAL_INTERFACE}\s+${NEIGHBOR}\s+${NEIGHBOR_INTERFACE_ID}\s+${CAPABILITIES}\s+${REMOTE_INTERFACE_DESC} -> Record
+  ^${LOCAL_INTERFACE}\s+${REMOTE_MAC} -> Record
+  ^${LOCAL_INTERFACE}\s+${NEIGHBOR}\s+${REMOTE_MAC}\s+${CAPABILITIES}\s+${REMOTE_INTERFACE_DESC} -> Record
