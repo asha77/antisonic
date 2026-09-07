@@ -39,14 +39,13 @@ def get_fab_topology(file_path):
             if line == ['\n'] or line == [' \n']:
                 continue
             line = line.strip('\n\r')
-            str = line.split(";")
-            if str[0] == 'MH_PAIR':
-                multihoming_pairs.append(str)
+            spl_str = line.split(";")
+            if spl_str[0] == 'MH_PAIR':
+                multihoming_pairs.append(spl_str)
     return multihoming_pairs
 
 
 def main():
-    mh_pairs_stats = {}
     stats = []
 
     parser = createparser()

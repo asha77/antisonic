@@ -8,5 +8,4 @@ ytc*
 /test_data/
 /ytcswl0304/
 fabric.topology
-fabric.topology.so1
-fabric.topology.vld
+fabric.topology.*

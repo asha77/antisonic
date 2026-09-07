@@ -1093,7 +1093,7 @@ def get_bgp_routes_to_model(empty_device, config, curr_path):
         bgp_routes = fsm.ParseText(config)
 
         # {'vrf': 'default', 'status': 'valid|suppressed|damped|history|best|multipath|internal|RIBFail|Stale|Removed', 'network': '0.0.0.0/0', 'next-hop': '100.64.4.130', 'next-hop-self': 'yes', 'metric': '0', 'local_pref': '50', 'weight': '0', 'as-path': '4292608010 4292608012', 'origin': 'IGP|EGP|incomplete'}
-        # 'as-path': '4292608010 4292608012', 'origin': 'IGP|EGP|incomplete'}
+        # 'as-path': '4292608010 4292608012', 'origin': 'IGP|EGP|incomplete' }
 
         for route in bgp_routes:
             if route[2] == '':

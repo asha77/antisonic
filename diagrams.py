@@ -22,44 +22,31 @@ def get_dev_style_from_model(model):
     # Accton-AS7326-56X
 
 
-    if ("AS7326-56X" in model):            # LEAF
+    if "AS7326-56X" in model:            # LEAF
         return [nexus_switch_style, 120, 60]
-    elif ("AS4630" in model):               # OOB Access
+    elif "AS4630" in model:               # OOB Access
         return [l2_switch_style, 120, 60]
-    elif ("AS5835" in model):               # OOB Core
+    elif "AS5835" in model:               # OOB Core
         return [l3_switch_style, 120, 120]
-    elif ("AS7726-32X" in model):           # BR
+    elif "AS7726-32X" in model:           # BR
         return [router_style, 120, 60]
-    elif ("AS7816-64X" in model):           # Spine
+    elif "AS7816-64X" in model:           # Spine
         return [ind_switch_style, 120, 60]
     else:
         return [other_device_style, 120, 60]
 
 
 def shorten_ifname(ifname):
-    if ("GigabitEthernet" in ifname):
+    if "GigabitEthernet" in ifname:
         return ifname.replace("GigabitEthernet", "ge")
-    elif ("TenGigabitEthernet" in ifname):
+    elif "TenGigabitEthernet" in ifname:
         return ifname.replace("TenGigabitEthernet", "te")
-    elif ("FastEthernet" in ifname):
+    elif "FastEthernet" in ifname:
         return ifname.replace("FastEthernet", "fa")
-    elif ("TwentyFiveGigE" in ifname):
+    elif "TwentyFiveGigE" in ifname:
         return ifname.replace("TwentyFiveGigE", "tfge")
     else:
         return ifname
-
-
-def filter_devices(devname):
-    if ("wap" in devname):
-        return False
-    elif "AP-" in devname:      # TODO: custom filter
-        return False
-    elif "esxi" in devname:      # TODO: custom filter
-        return False
-    elif "AVX" in devname:      # TODO: custom filter
-        return False
-    else:
-        return True
 
 
 def get_link_style_from_model(ints):
@@ -73,41 +60,40 @@ def get_link_style_from_model(ints):
     twe_gig_fast_link_style = "endArrow=none;fillColor=#f8cecc;strokeColor=#009900;startArrow=none;startFill=0;endFill=0;strokeWidth=7;rounded=0;endSize=0;startSize=0;edgeStyle=orthogonalEdgeStyle;"
     fast_link_style = "endArrow=none;fillColor=#f8cecc;strokeColor=default;startArrow=none;startFill=0;endFill=0;strokeWidth=1;rounded=0;endSize=0;startSize=0;jumpSize=0;edgeStyle=orthogonalEdgeStyle;"
 
-    if ("TenGigabitEthernet" in ints):
+    if "TenGigabitEthernet" in ints:
         return ten_gig_link_style
-    elif ("GigabitEthernet" in ints):
+    elif "GigabitEthernet" in ints:
         return gig_RJ45_link_style
-    elif ("TwentyFiveGigE" in ints):
+    elif "TwentyFiveGigE" in ints:
         return twe_gig_fast_link_style
-    elif ("FastEthernet" in ints):
+    elif "FastEthernet" in ints:
         return fast_link_style
     else:
         return new_link_style
 
 
-
-def trunking_analisys():
-    # structure of interfaces
-    # dev_id, [
-    # INTERFACE [0], DESCRIPTION [1], IP_ADDRESS [2], NETMASK [3], ACCESS_VLAN_ID [4]
-    # PORT_MODE [5], VOICE_VLAN_ID [6], TRUNK_VLAN_ID [7], NATIVE_VLAN_ID [8]
-    # CHANNEL_GROUP [9], PO_MODE [10], AUTH_MODE [11] ]
-
-    # structure of cdps
-    # file [0], src dev_id [1], src model [2], src ip [3], src_port [4],
-    # dst dev_id [5], dst model [6], dst IP [7], dst port [8]
-
-    # structure of devices
-    # hostname [0], mng_ip [1], domain [2], model [3], serial [4], sw_ver [5]
-
-    for dev in all_devices:
-        for link in all_cdps:
-
-            num = 0
-            if link[1] == dev[0]:
-                num = num + 1
-            if num:
-                print("Fake")
+# def trunking_analisys():
+#     # structure of interfaces
+#     # dev_id, [
+#     # INTERFACE [0], DESCRIPTION [1], IP_ADDRESS [2], NETMASK [3], ACCESS_VLAN_ID [4]
+#     # PORT_MODE [5], VOICE_VLAN_ID [6], TRUNK_VLAN_ID [7], NATIVE_VLAN_ID [8]
+#     # CHANNEL_GROUP [9], PO_MODE [10], AUTH_MODE [11] ]
+#
+#     # structure of cdps
+#     # file [0], src dev_id [1], src model [2], src ip [3], src_port [4],
+#     # dst dev_id [5], dst model [6], dst IP [7], dst port [8]
+#
+#     # structure of devices
+#     # hostname [0], mng_ip [1], domain [2], model [3], serial [4], sw_ver [5]
+#
+#     for dev in all_devices:
+#         for link in all_cdps:
+#
+#             num = 0
+#             if link[1] == dev[0]:
+#                 num = num + 1
+#             if num:
+#                 print("Fake")
 
 def create_diagram(devices):
     diagram = N2G.drawio_diagram()
@@ -160,3 +146,19 @@ def create_diagram(devices):
     diagram.layout(algo="drl")
     diagram.dump_file(filename="network_graph.drawio", folder="./output/")
     return
+
+def filter_devices(devname):
+    if "wap" in devname:
+        return False
+    elif "AP-" in devname:      # TODO: custom filter
+        return False
+    elif "esxi" in devname:      # TODO: custom filter
+        return False
+    elif "AVX" in devname:      # TODO: custom filter
+        return False
+    # elif ":" in devname:      # TODO: custom filter
+    #     return False
+    # elif "tc-jet-lab-srv" in devname:      # TODO: custom filter
+    #     return False
+    else:
+        return True
