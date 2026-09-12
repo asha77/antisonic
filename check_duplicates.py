@@ -1,5 +1,5 @@
 import os
-import device_detection
+
 import regparsers
 
 
@@ -12,7 +12,7 @@ def check_config_duplicates(list_of_files):
     filenum = 0
 
     for file in list_of_files:
-        if os.path.isfile(file) and (not file == 'logfile.log'):
+        if os.path.isfile(file) and (file != 'logfile.log') and (file != 'scrapli_channel.log'):
 
             with open(file, "r", encoding='utf-8') as conffile:
                 config = conffile.read()
@@ -26,7 +26,7 @@ def check_config_duplicates(list_of_files):
                 filenum = filenum + 1
 
     # ищем дупликаты в массиве с серийниками
-    for num in range(0, len(serial_list)):
+    for num in range(len(serial_list)):
         for num2 in range(num + 1, len(serial_list)):
             if serial_list[num][2] == serial_list[num2][2]:
                 if serial_list[num][2] == 'Not Found':

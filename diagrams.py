@@ -1,5 +1,7 @@
 import N2G
+
 import regparsers
+
 
 def get_dev_style_from_model(model):
     new_link_style = "endArrow=classic;fillColor=#f8cecc;strokeColor=#FF3399;dashed=1;edgeStyle=entityRelationEdgeStyle;startArrow=diamondThin;startFill=1;endFill=0;strokeWidth=5;"
@@ -145,20 +147,11 @@ def create_diagram(devices):
 
     diagram.layout(algo="drl")
     diagram.dump_file(filename="network_graph.drawio", folder="./output/")
-    return
+
 
 def filter_devices(devname):
-    if "wap" in devname:
+    if "wap" in devname or "AP-" in devname or "esxi" in devname or "AVX" in devname:
+#    if "wap" in devname or "AP-" in devname or "esxi" in devname or "AVX" in devname or ":" in devname or "tc-jet-lab-srv" in devname:
         return False
-    elif "AP-" in devname:      # TODO: custom filter
-        return False
-    elif "esxi" in devname:      # TODO: custom filter
-        return False
-    elif "AVX" in devname:      # TODO: custom filter
-        return False
-    # elif ":" in devname:      # TODO: custom filter
-    #     return False
-    # elif "tc-jet-lab-srv" in devname:      # TODO: custom filter
-    #     return False
     else:
         return True

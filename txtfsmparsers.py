@@ -1,5 +1,7 @@
 import os.path
+
 import textfsm
+
 import outintofiles
 import regparsers
 
@@ -111,7 +113,7 @@ def get_cdp_neighbours_to_model(empty_device, config, curr_path):
 
     # Extracting for Huawei
     if empty_device['os'] == 'huawei_vrp':
-        nei_template = open(os.path.join(curr_path, 'txtfsm_templates', "huawei", "huawei_lldp_nei.template"))
+        nei_template = open(os.path.join(curr_path, 'tits_templates', "huawei", "huawei_lldp_nei.template"))
         fsm = textfsm.TextFSM(nei_template)
         fsm.Reset()
         neighbours = fsm.ParseText(config)
@@ -312,7 +314,7 @@ def get_interfaces_config_to_model(empty_device, config, curr_path):
                 if intf[9] != '':
                     trunk_vlan_ids = trunk_vlan_ids + ',' + intf[9]
 
-                for i_key in range(0, len(int_status)):
+                for i_key in range(len(int_status)):
                     if int_status[i_key]['interface'] == outintofiles.normalize_interface_names(intf[0]):
                         break
 
@@ -357,7 +359,7 @@ def get_interfaces_config_to_model(empty_device, config, curr_path):
                         trunk_vlans = ''
                         dtp_mode = ''
                         interface_status = 'up'
-                    else:                    #
+                    else:
                         swport_mode = ''
                         access_vlan = ''
                         trunk_vlans = ''
@@ -495,7 +497,7 @@ def get_interfaces_config_to_model(empty_device, config, curr_path):
                 if intf[9] != '':
                     trunk_vlan_ids = trunk_vlan_ids + ',' + intf[9]
 
-                for i_key in range(0, len(int_status)):
+                for i_key in range(len(int_status)):
                     if outintofiles.normalize_interface_names(int_status[i_key]['interface']) == outintofiles.normalize_interface_names(intf[0]):
                         break
 
@@ -655,11 +657,11 @@ def get_vlans_configuration_to_model(empty_device, config, curr_path):
         j: int = 0
         w: int = 0
 
-        for i in range(0, len(vlans)):
+        for i in range(len(vlans)):
             if vlans[i][0] != "internal":
                 if vlans[i][0].find(',') != -1:
                     vlans_list =vlans[i][0].split(',')
-                    for j in range(0, len(vlans_list)):
+                    for j in range(len(vlans_list)):
                         if vlans_list[j].find('-') != -1:
                             inner_list = vlans_list[j].split('-')
                             for k in range(int(inner_list[0]), int(inner_list[1])+1):
@@ -691,11 +693,11 @@ def get_vlans_configuration_to_model(empty_device, config, curr_path):
         j: int = 0
         w: int = 0
 
-        for i in range(0, len(vlans)):
+        for i in range(len(vlans)):
             if vlans[i][0] != "internal":
                 if vlans[i][0].find(',') != -1:
                     vlans_list =vlans[i][0].split(',')
-                    for j in range(0, len(vlans_list)):
+                    for j in range(len(vlans_list)):
                         if vlans_list[j].find('-') != -1:
                             inner_list = vlans_list[j].split('-')
                             for k in range(int(inner_list[0]), int(inner_list[1])+1):
@@ -764,11 +766,11 @@ def get_vlans_from_config(config, curr_path):
     j: int = 0
     w: int = 0
 
-    for i in range(0, len(vlans)):
+    for i in range(len(vlans)):
         if vlans[i][0] != "internal":
             if vlans[i][0].find(',') != -1:
                 vlans_list =vlans[i][0].split(',')
-                for j in range(0, len(vlans_list)):
+                for j in range(len(vlans_list)):
                     vlan_instance = {
                         'id': vlans_list[j],
                         'name': ''
@@ -793,7 +795,7 @@ def get_access_config(config, curr_path):
 
     access_config = []
 
-    for i in range(0, len(access)):
+    for i in range(len(access)):
         access_config.append([])
         access_config[i] = access[i]
 
@@ -863,7 +865,7 @@ def get_con_access_config(config, curr_path):
 
     access_config = []
 
-    for i in range(0, len(access)):
+    for i in range(len(access)):
         access_config.append([])
         access_config[i] = access[i]
 
@@ -900,7 +902,7 @@ def get_tacacs_server_ips(config, curr_path, dev_model):
     '''
 
     if ("N9K" in dev_model):
-        match = regparsers.re.findall('^tacacs-server\shost\s([0-9]+.[0-9]+.[0-9]+.[0-9]+)', config, regparsers.re.MULTILINE)
+        match = regparsers.re.findall(r'^tacacs-server\shost\s([0-9]+.[0-9]+.[0-9]+.[0-9]+)', config, regparsers.re.MULTILINE)
         if match:
             s = ""
             for i in range(len(match)):
@@ -922,7 +924,7 @@ def get_tacacs_server_ips(config, curr_path, dev_model):
                 s = s + " "+ips[i][1]+","
             return s[:-1]
         else:
-            match = regparsers.re.findall('^tacacs-server\shost\s([0-9]+.[0-9]+.[0-9]+.[0-9]+)', config, regparsers.re.MULTILINE)
+            match = regparsers.re.findall(r'^tacacs-server\shost\s([0-9]+.[0-9]+.[0-9]+.[0-9]+)', config, regparsers.re.MULTILINE)
             if match:
                 s = ""
                 for i in range(len(match)):
@@ -949,9 +951,7 @@ def get_int_status(config, vendor_id, curr_path):
 
             if interf[2] == 'connected' or interf[2] == 'up':
                 port_status = 'connected'
-            elif interf[2] == 'notconnect' or interf[2] == 'down':
-                port_status = 'notconnect'
-            elif interf[2] == 'disabled':
+            elif interf[2] == 'notconnect' or interf[2] == 'down' or interf[2] == 'disabled':
                 port_status = 'notconnect'
             else:
                 port_status = 'not_determined'
@@ -1062,7 +1062,7 @@ def get_esi_to_model(empty_device, config, curr_path):
     return empty_device
 
 
-# TODO: didnot get ipv6 entries - just ipv4
+# TODO: did not get ipv6 entries - just ipv4
 def get_ip_nei_to_model(empty_device, config, curr_path):
     if empty_device['os'] == 'sonic_edgecore':
         ip_nei_template = open(os.path.join(curr_path, "txtfsm_templates", "edgecore", "edgecode_ip_nei.template"))

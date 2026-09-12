@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 
 import argparse
+import copy
+import os
+import pathlib
+from datetime import datetime
+
+from alive_progress import alive_bar
+
+import analytics
+import check_duplicates
+import datamodel
+import device_detection
 import diagrams
 import out_to_screen
 import outintofiles
-import check_duplicates
-import txtfsmparsers
-import device_detection
-import datamodel
-import os
-import pathlib
 import regparsers
-import analytics
-import copy
-from alive_progress import alive_bar
-from datetime import datetime
+import txtfsmparsers
 
-
-compliance_result = []
 devices = []
 empty_device = {}
 
@@ -35,7 +35,7 @@ def get_fab_topology(file_path):
     multihoming_pairs = []
 
     with open(file_path) as f:
-        for line in f.readlines():
+        for line in f:
             if line == ['\n'] or line == [' \n']:
                 continue
             line = line.strip('\n\r')
@@ -74,7 +74,7 @@ def main():
         # Start processing of configs
         with alive_bar(len(list_of_files), length=55, title='Progress', force_tty=True) as bar:
             for file in list_of_files:
-                if file == 'logfile.log':
+                if file == 'logfile.log' or file == 'scrapli_channel.log':
                     continue
                 bar.text = f'Processing file: {file}, please wait...'
                 if os.path.isfile(file):

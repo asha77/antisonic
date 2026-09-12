@@ -1,5 +1,6 @@
 import enum
 
+
 class mac_types(enum.Enum):
     edgecore = 0
     lldp = 1
@@ -44,7 +45,7 @@ config_entity = {
     'arp_table': [],                                # {'address': '192.168.0.1', 'mac': 'aa:aa:aa:aa:aa:aa', 'interface': 'static'}
     'esi_table': [],                                # {'esi': '03:aa:1c:73:00:01:01:00:00:65', 'type': 'R', 'port': 'PortChannel1', 'status': 'up', 'vteps': '192.168.1'}
     'ip_nei_table': [],                             # {'ip': '03:aa:1c:73:00:01', 'dev': 'Sag122', 'lladdr': '52:54:00:c7:17:ee', 'learned': 'extern_learn', 'used': 'used 67827/67827/67827', 'probes': '0', 'status': 'NOARP', 'proto': 'zebra'}
-    'bgp_sessions': [],                             #
+    'bgp_sessions': [],
     'cdp_neighbours': [],                           # {'device_id': 'asw-1.ru', 'ip_addr': '192.168.1', 'model': 'cisco 9200L-24T-4G', 'local_interface': 'GigabitEthernet0/0/0', 'remote_interface': 'GigabitEthernet0/0/0'}
     'logging_host': [],                             # '10.66.228.33', '10.10.248.70'
     'tacacs_servers': [],                           # '10.66.228.33', '10.66.228.33'
@@ -148,34 +149,34 @@ container_logging = {
 
 
 edgecore_log_errors = [
-    'ERR\ssystemd\S*:\sFailed\sto\sstart\s\S*\scontainer.',
-    'ERR\spython3:\s:-\sparseDatabaseConfig:\sSonic\sdatabase\sconfig\sfile\sdoesn',
-    'ERR\sswss#orchagent:\s:-\smeta_generic_validation_remove:\sobject\s\S+\sreference\scount\sis\s\d',
-    'ERR\sswss#orchagent:\s:-\sremoveNeighbor:\sFailed\sto\sremove\snext\shop',
-    'ERR\sswss#orchagent:\s:-\shandleSaiRemoveStatus:\sEncountered\sfailure\sin\sremove\soperation,\sexiting\sorchagent,\sSAI\sAPI:\sSAI_API_NEIGHBOR,\sstatus:\sSAI_STATUS_INSUFFICIENT_RESOURCES',
-    'ERR\sswss#orchagent:\s:-\screate:\screate\sstatus:\sSAI_STATUS_INSUFFICIENT_RESOURCES',
-    'ERR\sswss#orchagent:\s:-\screate:\screate\sstatus:\sSAI_STATUS_TABLE_FULL',
-    'ERR\sswss#orchagent:\s:-\sremoveNeighbor:\sFailed\sto\sremove\sneighbor',
-    'ERR kernel:\s\S*\si801_smbus\s\S+\sSMBus\sis\sbusy',
-    'ERR\ssyncd#syncd:\s\[none\]\sbrcm_sai_create_tunnel_es_member:\d+\stunnel\ses\smember\sreserve\sfailed\swith\serror',
-    'ERR\ssyncd#syncd:\s:-\ssendApiResponse:\sapi\sSAI_COMMON_API_CREATE\sfailed\sin\ssyncd\smode:\sSAI_STATUS_INSUFFICIENT_RESOURCES',
-    'ERR\ssyncd#syncd:\s:-\sprocessQuadEvent:\sattr:\sSAI_TUNNEL_ES_MEMBER_ATTR_IP:',
-    'ERR\ssyncd#syncd:\s:-\sprocessQuadEvent:\sattr:\sSAI_TUNNEL_ES_MEMBER_ATTR_ES_ID:\soid:',
-    'INFO\ssyncd#syncd:\s\[none\]\s_brcm_sai_nbr_create_ecmp_group:\d+\screate\segress\sfail\s*Table\sfull',
-    'ERR\ssyncd#syncd:\s\[none\]\s_brcm_sai_nbr_mac_db_update:\d+\screate\segress\sfail\sTable\sfull',
-    'WARNING\ssyncd#syncd:\s\[none\]\s_brcm_sai_nbr_create_ecmp_group:\d+\s+overlay\secmp\sgroup\sis\sfull',
-    'INFO\ssyncd#\/supervisord:\ssyncd\smalloc\(\):\sinvalid\ssize',
-    'ERR\ssyncd#syncd:\s\[none\]\sbrcm_sai_remove_neighbor_entry:\d+\sdestroy\secmp\segress\sobject\sfailed\swith\serror',
-    'WARNING\ssyncd#syncd:\s[none]\s_brcm_sai_nbr_create_ecmp_group:\d+\soverlay\secmp\sgroup\sis\sfull',
-    'WARNING\ssyncd#syncd:\s\[none\]\s_brcm_sai_nbr_create_ecmp_group:\d+\soverlay\secmp\sgroup\sis\sfull',
-    'ERR\ssyncd#syncd:\s\[none\]\sbrcm_sai_create_route_entry:\d+\sL3\sroute\sadd\sfailed\swith\serror',
-    'ERR\ssyncd#syncd:\s:-\ssendApiResponse:\sapi\sSAI_COMMON_API_BULK_CREATE\sfailed\sin\ssyncd\smode:\sSAI_STATUS_FAILURE',
-    'INFO\sbgp#\/supervisord:\szebra\s\S+\s\S+\sZEBRA:\s\[\S*\]\[\S+\s\S+\]\sFailed to install Nexthop ID',
-    'INFO\sswss#supervisord\s\S*\s\S+\sINFO\sexited:\sorchagent\s\(terminated\sby\sSIGABRT\s\(core\sdumped\);\snot\sexpected\)',
-    'INFO\sswss#\/supervisord:\sorchagent\sterminate\scalled\safter\sthrowing\san\sinstance\sof',
-    'mce:\s\[Hardware\sError\]:\sCPU\s\d:\sMachine\sCheck:\s0\sBank\s7:',
-    'DEBUG\skernel:\s\[\S+\]\sEDAC\ssbridge\sMC\d:\sHANDLING\sMCE\sMEMORY\sERROR',
-    'WARNING\skernel:\s\[\S+\]\sEDAC\sMC\d:\s\d+\sCE\smemory\sread\serror'
+    r'ERR\ssystemd\S*:\sFailed\sto\sstart\s\S*\scontainer.',
+    r'ERR\spython3:\s:-\sparseDatabaseConfig:\sSonic\sdatabase\sconfig\sfile\sdoesn',
+    r'ERR\sswss#orchagent:\s:-\smeta_generic_validation_remove:\sobject\s\S+\sreference\scount\sis\s\d',
+    r'ERR\sswss#orchagent:\s:-\sremoveNeighbor:\sFailed\sto\sremove\snext\shop',
+    r'ERR\sswss#orchagent:\s:-\shandleSaiRemoveStatus:\sEncountered\sfailure\sin\sremove\soperation,\sexiting\sorchagent,\sSAI\sAPI:\sSAI_API_NEIGHBOR,\sstatus:\sSAI_STATUS_INSUFFICIENT_RESOURCES',
+    r'ERR\sswss#orchagent:\s:-\screate:\screate\sstatus:\sSAI_STATUS_INSUFFICIENT_RESOURCES',
+    r'ERR\sswss#orchagent:\s:-\screate:\screate\sstatus:\sSAI_STATUS_TABLE_FULL',
+    r'ERR\sswss#orchagent:\s:-\sremoveNeighbor:\sFailed\sto\sremove\sneighbor',
+    r'ERR kernel:\s\S*\si801_smbus\s\S+\sSMBus\sis\sbusy',
+    r'ERR\ssyncd#syncd:\s\[none\]\sbrcm_sai_create_tunnel_es_member:\d+\stunnel\ses\smember\sreserve\sfailed\swith\serror',
+    r'ERR\ssyncd#syncd:\s:-\ssendApiResponse:\sapi\sSAI_COMMON_API_CREATE\sfailed\sin\ssyncd\smode:\sSAI_STATUS_INSUFFICIENT_RESOURCES',
+    r'ERR\ssyncd#syncd:\s:-\sprocessQuadEvent:\sattr:\sSAI_TUNNEL_ES_MEMBER_ATTR_IP:',
+    r'ERR\ssyncd#syncd:\s:-\sprocessQuadEvent:\sattr:\sSAI_TUNNEL_ES_MEMBER_ATTR_ES_ID:\soid:',
+    r'INFO\ssyncd#syncd:\s\[none\]\s_brcm_sai_nbr_create_ecmp_group:\d+\screate\segress\sfail\s*Table\sfull',
+    r'ERR\ssyncd#syncd:\s\[none\]\s_brcm_sai_nbr_mac_db_update:\d+\screate\segress\sfail\sTable\sfull',
+    r'WARNING\ssyncd#syncd:\s\[none\]\s_brcm_sai_nbr_create_ecmp_group:\d+\s+overlay\secmp\sgroup\sis\sfull',
+    r'INFO\ssyncd#\/supervisord:\ssyncd\smalloc\(\):\sinvalid\ssize',
+    r'ERR\ssyncd#syncd:\s\[none\]\sbrcm_sai_remove_neighbor_entry:\d+\sdestroy\secmp\segress\sobject\sfailed\swith\serror',
+    r'WARNING\ssyncd#syncd:\s[none]\s_brcm_sai_nbr_create_ecmp_group:\d+\soverlay\secmp\sgroup\sis\sfull',
+    r'WARNING\ssyncd#syncd:\s\[none\]\s_brcm_sai_nbr_create_ecmp_group:\d+\soverlay\secmp\sgroup\sis\sfull',
+    r'ERR\ssyncd#syncd:\s\[none\]\sbrcm_sai_create_route_entry:\d+\sL3\sroute\sadd\sfailed\swith\serror',
+    r'ERR\ssyncd#syncd:\s:-\ssendApiResponse:\sapi\sSAI_COMMON_API_BULK_CREATE\sfailed\sin\ssyncd\smode:\sSAI_STATUS_FAILURE',
+    r'INFO\sbgp#\/supervisord:\szebra\s\S+\s\S+\sZEBRA:\s\[\S*\]\[\S+\s\S+\]\sFailed to install Nexthop ID',
+    r'INFO\sswss#supervisord\s\S*\s\S+\sINFO\sexited:\sorchagent\s\(terminated\sby\sSIGABRT\s\(core\sdumped\);\snot\sexpected\)',
+    r'INFO\sswss#\/supervisord:\sorchagent\sterminate\scalled\safter\sthrowing\san\sinstance\sof',
+    r'mce:\s\[Hardware\sError\]:\sCPU\s\d:\sMachine\sCheck:\s0\sBank\s7:',
+    r'DEBUG\skernel:\s\[\S+\]\sEDAC\ssbridge\sMC\d:\sHANDLING\sMCE\sMEMORY\sERROR',
+    r'WARNING\skernel:\s\[\S+\]\sEDAC\sMC\d:\s\d+\sCE\smemory\sread\serror'
 ]
 
 

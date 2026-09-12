@@ -1,9 +1,9 @@
 import re
+
 import netaddr
+
 import datamodel
 import device_detection
-
-
 
 
 def obtain_hostname(config):
@@ -11,15 +11,15 @@ def obtain_hostname(config):
     Extract device hostname
     """
 
-    match = re.search('hostname\s+([\w+\-]*)', config)
+    match = re.search(r'hostname\s+([\w+\-]*)', config)
     if match:
         return match.group(1).strip().replace('"', '')
     else:
-        match = re.search('sysname\s(.*)', config)
+        match = re.search(r'sysname\s(.*)', config)
         if match:
             return match.group(1).strip().replace('"', '')
         else:
-            match = re.search('snmp-server\ssysname\s(.*)', config)
+            match = re.search(r'snmp-server\ssysname\s(.*)', config)
             if match:
                 return match.group(1).strip().replace('"', '')
             else:
@@ -32,15 +32,15 @@ def obtain_vtp_version(config):
     """
     # code to get vtp version: 'VTP version running: 1"
 
-    match = re.search('VTP version running\s*:\s*(\d)', config)
+    match = re.search(r'VTP version running\s*:\s*(\d)', config)
     if match:
         return match.group(1).strip()
     else:
-        match = re.search('VTP Version\s*:\s*(\d)', config)
+        match = re.search(r'VTP Version\s*:\s*(\d)', config)
         if match:
             return match.group(1).strip()
         else:
-            match = re.search('VTP Version\s*:\s*running VTP(\d)', config)
+            match = re.search(r'VTP Version\s*:\s*running VTP(\d)', config)
             if match:
                 return match.group(1).strip()
     return "Not Found"
@@ -52,7 +52,7 @@ def obtain_vtp_domain_name(config):
     """
     # code to get vtp domain name: 'VTP Domain Name                 : DOM1"
 
-    match = re.search('VTP Domain Name\s*:\s+(.*)', config)
+    match = re.search(r'VTP Domain Name\s*:\s+(.*)', config)
     if match:
         return match.group(1).strip()
     return "Not Found"
@@ -64,7 +64,7 @@ def obtain_vtp_oper_mode(config):
     """
     # code to get vtp version: 'VTP Operating Mode              : Transparent"
 
-    match = re.search('VTP Operating Mode\s*:\s+(.*)', config)
+    match = re.search(r'VTP Operating Mode\s*:\s+(.*)', config)
     if match:
         return match.group(1).strip()
     return "Not Found"
@@ -75,7 +75,7 @@ def obtain_vtp_revision(config):
     """
     # code to get vtp version: 'Configuration Revision            : 299"
 
-    match = re.search('Configuration Revision\s*:\s+(\d+)', config)
+    match = re.search(r'Configuration Revision\s*:\s+(\d+)', config)
     if match:
         return match.group(1).strip()
     return "Not Found"
@@ -86,7 +86,7 @@ def obtain_timezone(config):
     Extract clock timezone value
     """
 
-    match = re.search("clock timezone (.*)", config)
+    match = re.search(r"clock timezone (.*)", config)
     if match:
         return match.group(1).strip()
     else:
@@ -98,52 +98,52 @@ def obtain_model(vendor_id, config):
     Extract model number
     '''
     if vendor_id == 'cisco':
-        match = re.search("Model \wumber\s*: (.*)", config)
+        match = re.search(r"Model \wumber\s*: (.*)", config)
         if match:
             return match.group(1).strip()
         else:
             # match = re.search("\wisco (.*) \(.*\) \w* (with )*\d+K\/\d+K bytes of memory.", config)
-            match = re.search("\wisco (\S+) .* (with)*\d+K\/\d+K bytes of memory.", config)
+            match = re.search(r"\wisco (\S+) .* (with)*\d+K\/\d+K bytes of memory.", config)
             if match:
                 return match.group(1).strip()
             else:
-                match = re.search("\s+cisco Nexus9000 (.*) Chassis", config)
+                match = re.search(r"\s+cisco Nexus9000 (.*) Chassis", config)
                 if match:
                     return "N9K-"+match.group(1).strip()
                 else:
-                    match = re.search("ROM: Bootstrap program is Linux", config)
+                    match = re.search(r"ROM: Bootstrap program is Linux", config)
                     if match:
                         return "Cisco IOS vRouter "
                     else:
-                        match = re.search("\wisco (\S+) .* (with)*\d+K bytes of physical memory.", config)
+                        match = re.search(r"\wisco (\S+) .* (with)*\d+K bytes of physical memory.", config)
                         if match:
                             return match.group(1).strip()
 
     if vendor_id == 'huawei':
-        match = re.search("Copyright.*HUAWEI.*\nHUAWEI\s([\w-]+)\s", config)
+        match = re.search(r"Copyright.*HUAWEI.*\nHUAWEI\s([\w-]+)\s", config)
         if match:
             return match.group(1).strip()
 
     if vendor_id == 'hpe' or vendor_id == 'hpe_comware' or vendor_id == 'hpe_aruba':
-        match = re.search(";\s(\S+)\sConfiguration\sEditor;", config)
+        match = re.search(r";\s(\S+)\sConfiguration\sEditor;", config)
         if match:
             return device_detection.get_hp_model_from_pn(match.group(1).strip())
         else:
-            match = re.search('System Description "HPE OfficeConnect Switch.+\)\s(\S+),\s.+', config)
+            match = re.search(r'System Description "HPE OfficeConnect Switch.+\)\s(\S+),\s.+', config)
             if match:
                 return device_detection.get_hp_model_from_pn(match.group(1).strip())
             else:
-                match = re.search('\sversion\s(\S+),\sRelease\s(\S+)\n#\n\ssysname\s(\S+)', config)
+                match = re.search(r'\sversion\s(\S+),\sRelease\s(\S+)\n#\n\ssysname\s(\S+)', config)
                 if match:
                     return 'hp_switch'
 
     if vendor_id == 'edgecore':
-        match = re.search('\s*HwSKU:\s(\S*)', config)
+        match = re.search(r'\s*HwSKU:\s(\S*)', config)
         if match:
             return match.group(1).strip()
 
     if vendor_id == 'rdp':
-        match = re.search('\s*product-name\s(\S*)', config)
+        match = re.search(r'\s*product-name\s(\S*)', config)
         if match:
             return match.group(1).strip()
     return "Not found"
@@ -151,7 +151,7 @@ def obtain_model(vendor_id, config):
 
 def obtain_num_hosts(vendor_id, config):
     if vendor_id == 'edgecore':
-        match = re.search('hosts\s+:\s+(\d+)\s', config)
+        match = re.search(r'hosts\s+:\s+(\d+)\s', config)
         if match:
             return match.group(1).strip()
     return "Not found"
@@ -159,7 +159,7 @@ def obtain_num_hosts(vendor_id, config):
 
 def obtain_route_num(vendor_id, config):
     if vendor_id == 'edgecore':
-        match = re.search('routes\s+:\s+(\d+)\s', config)
+        match = re.search(r'routes\s+:\s+(\d+)\s', config)
         if match:
             return match.group(1).strip()
     return "Not found"
@@ -167,7 +167,7 @@ def obtain_route_num(vendor_id, config):
 
 def obtain_nexthops(vendor_id, config):
     if vendor_id == 'edgecore':
-        match = re.search('nexthops\s+:\s+(\d+)\s', config)
+        match = re.search(r'nexthops\s+:\s+(\d+)\s', config)
         if match:
             return match.group(1).strip()
     return "Not found"
@@ -175,7 +175,7 @@ def obtain_nexthops(vendor_id, config):
 
 def obtain_ecmp_groups(vendor_id, config):
     if vendor_id == 'edgecore':
-        match = re.search('ecmp_groups\s+:\s+(\d+)\s', config)
+        match = re.search(r'ecmp_groups\s+:\s+(\d+)\s', config)
         if match:
             return match.group(1).strip()
     return "Not found"
@@ -189,19 +189,19 @@ def obtain_serial(config):
     vendor_id = device_detection.obtain_device_vendor_id(config)
 
     if vendor_id == 'cisco':
-        match = re.search("\wystem \werial \wumber\s*: (.*)", config)
+        match = re.search(r"\wystem \werial \wumber\s*: (.*)", config)
         if match:
             return match.group(1).strip()
         else:
-            match = re.search("\s*\wrocessor \woard ID (.*)", config)
+            match = re.search(r'\s*\wrocessor \woard ID (.*)', config)
             if match:
                 return match.group(1).strip()
             else:
-                match = re.search("\s*ROM Version\s*:\s*\S*\s*Serial\sNumber\s*:\s*(\S+)", config)
+                match = re.search(r"\s*ROM Version\s*:\s*\S*\s*Serial\sNumber\s*:\s*(\S+)", config)
                 if match:
                     return match.group(1).strip()
                 else:
-                    match = re.search("\s*Serial\sNumber\s*:\s*(\S+)", config)
+                    match = re.search(r"\s*Serial\sNumber\s*:\s*(\S+)", config)
                     if match:
                         return match.group(1).strip()
                     else:
@@ -210,47 +210,47 @@ def obtain_serial(config):
     if vendor_id == 'huawei':
         match = re.search("Slot       Card   Type               Serial-number            Manu-date", config)
         if match:
-            match = re.search("\w*Manu-date\n.+\n\d[\s-]*[\w-]*\s*(\w*)", config)
+            match = re.search(r"\w*Manu-date\n.+\n\d[\s-]*[\w-]*\s*(\w*)", config)
             if match:
                 return match.group(1).strip()
 
         match = re.search("Slot  Sub  Serial-number          Manu-date", config)
         if match:
-            match = re.search("\w*Manu-date\n.+\n\d[\s-]*\s*(\w*)", config)
+            match = re.search(r"\w*Manu-date\n.+\n\d[\s-]*\s*(\w*)", config)
             if match:
                 return match.group(1).strip()
 
 
-        match = re.search("Equipment SN\(ESN\): (\S+)", config)
+        match = re.search(r"Equipment SN\(ESN\): (\S+)", config)
         if match:
             return match.group(1).strip()
 
     if vendor_id == 'hpe_comware' or vendor_id == 'hpe_aruba':
-        match = re.search("\wystem \werial \wumber\ *: (.*)", config)
+        match = re.search(r"\wystem \werial \wumber\ *: (.*)", config)
         if match:
             return match.group(1).strip()
         else:
-            match = re.search("\s*\wrocessor \woard ID (.*)", config)
+            match = re.search(r"\s*\wrocessor \woard ID (.*)", config)
             if match:
                 return match.group(1).strip()
             else:
-                match = re.search("\s*ROM Version\s*:\s*\S*\s*Serial\sNumber\s*:\s*(\S+)", config)
+                match = re.search(r"\s*ROM Version\s*:\s*\S*\s*Serial\sNumber\s*:\s*(\S+)", config)
                 if match:
                     return match.group(1).strip()
                 else:
-                    match = re.search("\s*Serial\sNumber\s*:\s*(\S+)", config)
+                    match = re.search(r"\s*Serial\sNumber\s*:\s*(\S+)", config)
                     if match:
                         return match.group(1).strip()
                     else:
                         return "Not Found"
 
     if vendor_id == 'edgecore':
-        match = re.search("Serial Number:\s(\w*)", config)
+        match = re.search(r"Serial Number:\s(\w*)", config)
         if match:
             return match.group(1).strip()
 
     if vendor_id == 'rdp':
-        match = re.search("serial-number\s(\w*)", config)
+        match = re.search(r"serial-number\s(\w*)", config)
         if match:
             return match.group(1).strip()
 
@@ -262,7 +262,7 @@ def obtain_domain(config):
     Extract domain name
     '''
 
-    match = re.search("domain[\s\S-]name (.*)", config)
+    match = re.search(r"domain[\s\S-]name (.*)", config)
     if match:
         return match.group(1).strip()
     else:
@@ -276,41 +276,37 @@ def obtain_software_version(os, config):
     '''
 
     # os: cisco_ios_xe, cisco_ios, cisco_ios_xr, arista_eos, cisco_nx_os, aruba_aos-s, hpe_os
-    if os == 'cisco_ios_xe':
-        match = re.search("Cisco .+ Version ([0-9.()A-Za-z]+)", config)
-        if match:
-            return match.group(1).strip()
-    elif os == 'cisco_ios':
-        match = re.search("Cisco .+ Version ([0-9.()A-Za-z]+)", config)
+    if os == 'cisco_ios_xe' or os == 'cisco_ios':
+        match = re.search(r"Cisco .+ Version ([0-9.()A-Za-z]+)", config)
         if match:
             return match.group(1).strip()
     elif os == 'cisco_nx_os':
-        match = re.search("\ *NXOS: version (.*)", config)
+        match = re.search(r"\ *NXOS: version (.*)", config)
         if match:
             return match.group(1).strip()
     elif os == 'EOS':
-        match = re.search("Software image version: (.*)", config)
+        match = re.search(r"Software image version: (.*)", config)
         if match:
             return match.group(1).strip()
     elif os == 'aruba_aos-s':
-        match = re.search("; \S+ Configuration Editor; Created on release #(\S+)", config)
+        match = re.search(r"; \S+ Configuration Editor; Created on release #(\S+)", config)
         # match = re.search("\s*Software revision\s*:\s*(\S+)", config)
         if match:
             return match.group(1).strip()
     elif os == 'huawei_vrp':
-        match = re.search("VRP \(R\) software, Version (.*)", config)
+        match = re.search(r"VRP \(R\) software, Version (.*)", config)
         if match:
             return match.group(1).strip()
 
     elif os == 'sonic_edgecore':
-        match = re.search('\s*SONiC Software Version:\s*(\S+)', config)
+        match = re.search(r'\s*SONiC Software Version:\s*(\S+)', config)
         if match:
             str = match.group(1).strip()
             str = str[15:len(str)]
 #            return match.group(1).strip()
             return str
     elif os == 'rdp_econpb_os':
-        match = re.search('\s*image-name\s*(\S+)', config)
+        match = re.search(r'\s*image-name\s*(\S+)', config)
         if match:
             str = match.group(2).strip()
             return str
@@ -327,7 +323,7 @@ def obtain_mng_ip_from_filename(filename):
     # Gateway of last resort is 10.2.220.1 to network 0.0.0.0
     # Default gateway is 10.2.254.1
 
-    gw_match = re.search("([0-9]+.[0-9]+.[0-9]+.[0-9]+)", filename)
+    gw_match = re.search(r"([0-9]+.[0-9]+.[0-9]+.[0-9]+)", filename)
     if gw_match:
         return gw_match.group(1).strip()
     else:
@@ -344,21 +340,21 @@ def obtain_mng_ip_from_config(device, config):
     # Default gateway is 10.2.254.1
 
     if device['os'] == 'cisco_ios_xe' or device['os'] == 'cisco_ios' or device['os'] == 'cisco_ios_xr' or device['os'] == 'cisco_nx_os':
-        gw_match = re.search("Gateway of last resort is ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
+        gw_match = re.search(r"Gateway of last resort is ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
         if gw_match:
             gwip = netaddr.IPAddress(gw_match.group(1).strip())
         else:
-            gw_match = re.search("Default gateway is ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
+            gw_match = re.search(r"Default gateway is ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
             if gw_match:
                 gwip = netaddr.IPAddress(gw_match.group(1).strip())
             else:
-                gw_match = re.search("ip default-gateway ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
+                gw_match = re.search(r"ip default-gateway ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
                 if gw_match:
                     gwip = netaddr.IPAddress(gw_match.group(1).strip())
                 else:
                     gwip = "0.0.0.0"    # Gateway not found, fake gwip
 
-        match = re.findall("\sip address ([0-9]+.[0-9]+.[0-9]+.[0-9]+) ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
+        match = re.findall(r"\sip address ([0-9]+.[0-9]+.[0-9]+.[0-9]+) ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
         found = False
         if match:
             for i in range(len(match)):
@@ -374,17 +370,17 @@ def obtain_mng_ip_from_config(device, config):
 
 
     if device['os'] == 'huawei_vrp':
-        gw_match = re.search("ip route-static 0.0.0.0 0.0.0.0 ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
+        gw_match = re.search(r"ip route-static 0.0.0.0 0.0.0.0 ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
         if gw_match:
             gwip = netaddr.IPAddress(gw_match.group(1).strip())
         else:
-            gw_match = re.search("^\s+0.0.0.0\/0\s+\w+\s+\d+\s+\d+\s+\w+\s+([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
+            gw_match = re.search(r"^\s+0.0.0.0\/0\s+\w+\s+\d+\s+\d+\s+\w+\s+([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
             if gw_match:
                 gwip = netaddr.IPAddress(gw_match.group(1).strip())
             else:
                 gwip = "0.0.0.0"    # Gateway not found, fake gwip
 
-        match = re.findall("\s+ip address ([0-9]+.[0-9]+.[0-9]+.[0-9]+) ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
+        match = re.findall(r"\s+ip address ([0-9]+.[0-9]+.[0-9]+.[0-9]+) ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
         found = False
         if match:
             for i in range(len(match)):
@@ -400,17 +396,17 @@ def obtain_mng_ip_from_config(device, config):
 
     # aruba_aos-s, hpe_os
     if device['os'] == 'aruba_aos-s':
-        gw_match = re.search("ip route 0.0.0.0 0.0.0.0\s([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
+        gw_match = re.search(r"ip route 0.0.0.0 0.0.0.0\s([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
         if gw_match:
             gwip = netaddr.IPAddress(gw_match.group(1).strip())
         else:
-            gw_match = re.search("\s*ip default-gateway\s([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
+            gw_match = re.search(r"\s*ip default-gateway\s([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
             if gw_match:
                 gwip = netaddr.IPAddress(gw_match.group(1).strip())
             else:
                 gwip = "0.0.0.0"    # Gateway not found, fake gwip
 
-        match = re.findall("\s+ip address\s([0-9]+.[0-9]+.[0-9]+.[0-9]+) ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
+        match = re.findall(r"\s+ip address\s([0-9]+.[0-9]+.[0-9]+.[0-9]+) ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
         found = False
         if match:
             for i in range(len(match)):
@@ -424,17 +420,18 @@ def obtain_mng_ip_from_config(device, config):
         else:
             return "Not Found"
 
+    # TODO: check if parms correct
     if device['os'] == 'hpe_os':
-        match = re.search("\s*network parms\s([0-9]+.[0-9]+.[0-9]+.[0-9]+).*", config)
+        match = re.search(r"\s*network parms\s([0-9]+.[0-9]+.[0-9]+.[0-9]+).*", config)
         if match:
             return match.group(1).strip()
 
     if device['os'] == 'hpe_comware':       # TODO: check if two default gateways present
-        gw_match = re.search("\s+ip route-static 0.0.0.0 0.0.0.0\s([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
+        gw_match = re.search(r"\s+ip route-static 0.0.0.0 0.0.0.0\s([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
         if gw_match:
             gwip = netaddr.IPAddress(gw_match.group(1).strip())
 
-        match = re.findall("\s+ip address\s([0-9]+.[0-9]+.[0-9]+.[0-9]+) ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
+        match = re.findall(r"\s+ip address\s([0-9]+.[0-9]+.[0-9]+.[0-9]+) ([0-9]+.[0-9]+.[0-9]+.[0-9]+)", config)
         found = False
         if match:
             for i in range(len(match)):
@@ -477,15 +474,15 @@ def get_type_of_sw_from_hostname(hostname):
     Extract switch type from device hostname (if any naming convention exist)
     '''
 
-    match = re.search("\S+asw\S+", hostname)
+    match = re.search(r"\S+asw\S+", hostname)
     if match:
         return "asw"
     else:
-        match = re.search("\S+dsw\S+", hostname)
+        match = re.search(r"\S+dsw\S+", hostname)
         if match:
             return "dsw"
         else:
-            match = re.search("\S*csw\S+", hostname)
+            match = re.search(r"\S*csw\S+", hostname)
             if match:
                 return "csw"
             else:
@@ -499,7 +496,7 @@ def get_num_of_access_int_from_interface_list(ints):
     i: int = 0
     intcount = 0
 
-    for i in range(0, len(ints)):
+    for i in range(len(ints)):
         if ints[i][4] != "" or ints[i][5] == "access":
             intcount = intcount + 1
     return (intcount)
@@ -526,7 +523,7 @@ def get_num_of_trunk_int_from_interface_list(ints):
     i: int = 0
     intcount = 0
 
-    for i in range(0, len(ints)):
+    for i in range(len(ints)):
         if ints[i][5] == "trunk":
             intcount = intcount + 1
     return (intcount)
@@ -552,7 +549,7 @@ def get_num_of_dot1x_interfaces(ints):
     i: int = 0
     intcount = 0
 
-    for i in range(0, len(ints)):
+    for i in range(len(ints)):
         if ints[i][11] != "":
             intcount = intcount + 1
     return (intcount)
@@ -577,7 +574,7 @@ def get_num_of_ints_with_ip(ints):
     i: int = 0
     intcount = 0
 
-    for i in range(0, len(ints)):
+    for i in range(len(ints)):
         if ints[i][2] != "":
             intcount = intcount + 1
     return (intcount)
@@ -698,7 +695,7 @@ def get_vlan_ids_on_trunk(trunk_config):
 
 def get_all_vlan_ids_from_trunk(ints):
     '''
-    Get all vlan ids fron all trunk ports
+    Get all vlan ids from all trunk ports
     Returns set of vlan id values
     '''
 
@@ -708,7 +705,7 @@ def get_all_vlan_ids_from_trunk(ints):
         if inter['switchport_mode'] == 'trunk':
             ids = inter['trunk_vlan_ids']
             if len(ids) > 0:
-                for i in range(0, len(ids)):
+                for i in range(len(ids)):
                     vlan_ids.add(ids[i])
     return vlan_ids
 
@@ -721,7 +718,7 @@ def get_num_of_physical_ints(ints):
     i: int = 0
     intcount = 0
 
-    for i in range(0, len(ints)):
+    for i in range(len(ints)):
         if is_physical_int(ints[i][0]):
             intcount = intcount + 1
     return (intcount)
@@ -748,7 +745,7 @@ def get_num_of_svi_ints(ints):
     i: int = 0
     intcount = 0
 
-    for i in range(0, len(ints)):
+    for i in range(len(ints)):
         if is_svi_int(ints[i][0]):
             intcount = intcount + 1
     return intcount
@@ -788,9 +785,7 @@ def is_physical_interface(inttype):
     '''
     Check interface type to be physical
     '''
-    if inttype == 'ethernet':
-        return True
-    elif inttype == 'serial':
+    if inttype == 'ethernet' or inttype == 'serial':
         return True
     else:
         return False
@@ -959,7 +954,7 @@ def check_error_log(vendor_id, log_file):
 def count_all_errors_from_log(vendor_id, log_file):
     num_errors = 0
     if vendor_id == 'edgecore':
-        match = re.findall('\sERR\s', log_file)
+        match = re.findall(r'\sERR\s', log_file)
         if match:
             num_errors = len(match)
     return num_errors
@@ -969,7 +964,7 @@ def obtain_evpn_mh_holdtime(config):
     '''
     Extract evpn mh mac-holdtime 0
     '''
-    match = re.search("evpn\smh\smac-holdtime\s(\d)", config)
+    match = re.search(r"evpn\smh\smac-holdtime\s(\d)", config)
     if match:
         return match.group(1).strip()
     else:
@@ -980,7 +975,7 @@ def obtain_evpn_mh_neigh_holdtime(config):
     '''
     Extract evpn mh neigh-holdtime 0
     '''
-    match = re.search("evpn\smh\sneigh-holdtime\s(\d)", config)
+    match = re.search(r"evpn\smh\sneigh-holdtime\s(\d)", config)
     if match:
         return match.group(1).strip()
     else:
@@ -992,7 +987,7 @@ def get_evpn_mh_adv_unr_nei(config):
     Extract evpn mh advertise-unreach-neighbor
     '''
 
-    match = re.search("evpn\smh\sadvertise-unreach-neighbor", config)
+    match = re.search(r"evpn\smh\sadvertise-unreach-neighbor", config)
     if match:
         return "TRUE"
     else:
@@ -1001,11 +996,11 @@ def get_evpn_mh_adv_unr_nei(config):
 
 def get_obj_tracker_sess_num(config):
     '''
-    Extract number of oject tracker sessions from config
+    Extract number of object tracker sessions from config
     '''
 
 #    match = re.search("\s+\"Session(\d)\": {", config)
-    match = re.findall("Session(\d)", config)
+    match = re.findall(r"Session(\d)", config)
 
     if match:
         return str(match.__len__())
@@ -1020,7 +1015,7 @@ def get_ipv6_link_local_enable(config):
     '''
 
 #    match = re.search("\s+\"Session(\d)\": {", config)
-    match = re.findall("ipv6_use_link_local_only\":\s\"enable\"", config)
+    match = re.findall(r"ipv6_use_link_local_only\":\s\"enable\"", config)
 
     if match:
         return str(match.__len__())
@@ -1033,7 +1028,7 @@ def get_frr_logging(config):
     Extract frr services logging severity from config
     '''
     frr_loglevel = []
-    match = re.findall("Syslog\slogging:\slevel\s(\w+),\sfacility\s(\w+),\sident\s(\w+)", config)
+    match = re.findall(r"Syslog\slogging:\slevel\s(\w+),\sfacility\s(\w+),\sident\s(\w+)", config)
 
     if match:
         for i in range(len(match)):
@@ -1052,7 +1047,7 @@ def get_processes_logging(config):
     container_logging = []
 
     for ent in datamodel.log_entities:
-        restring = ent + "\s+(\w+)\n"
+        restring = ent + "\\s+(\\w+)\n"
 
         match = re.search(restring, config)
         if match:
